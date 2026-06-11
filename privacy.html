@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Kaynko POS</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 720px; margin: 60px auto; padding: 0 24px; color: #1A1A1A; line-height: 1.7; }
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin: 32px 0 8px; }
+    p, li { font-size: 0.95rem; color: #555; margin-bottom: 12px; }
+    a { color: #1B7A3E; }
+    .back { display: inline-block; margin-bottom: 32px; font-size: 0.85rem; color: #888; }
+    .date { font-size: 0.85rem; color: #888; margin-bottom: 32px; }
+  </style>
+</head>
+<body>
+  <a href="/" class="back">← Kaynko POS</a>
+  <h1>Privacy Policy</h1>
+  <p class="date">Last updated: June 2026</p>
+
+  <h2>1. Data Storage</h2>
+  <p>Kaynko POS stores all business data (sales, products, customers, inventory) locally on your Android device in an encrypted SQLite database. Data does not leave your device unless you explicitly use a sync feature (Google Sheets) or configure webhooks.</p>
+
+  <h2>2. Data We Collect</h2>
+  <p>We collect crash reports via Firebase Crashlytics to improve app stability. These reports contain device information and app state at the time of the crash. No sales data or personal customer information is included in crash reports.</p>
+  <p>If you subscribe to a paid plan, your subscription is managed by RevenueCat. Their privacy policy applies to subscription data.</p>
+
+  <h2>3. Google Sheets Integration</h2>
+  <p>If you connect your Google account, Kaynko creates a spreadsheet in your Google Drive. The app only accesses spreadsheets it creates — it cannot read or modify any other files in your Drive. You can disconnect at any time from Settings → Export & Sync.</p>
+
+  <h2>4. Webhooks</h2>
+  <p>If you configure webhooks, Kaynko sends sales and event data to the HTTPS endpoints you specify. You are responsible for the security of those endpoints.</p>
+
+  <h2>5. Security</h2>
+  <p>The local database is encrypted with AES-256. Sensitive credentials (encryption keys, API keys, webhook secrets) are stored in Android Keystore via FlutterSecureStorage.</p>
+
+  <h2>6. Contact</h2>
+  <p>Questions? Email us at <a href="mailto:support@kaynko.app">support@kaynko.app</a></p>
+</body>
+</html>

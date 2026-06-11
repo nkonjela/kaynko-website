@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Docs — Kaynko POS</title>
+  <meta name="description" content="Integrate with Kaynko POS using webhooks. Real-time event notifications for sales, sessions, debts, and products.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #1B7A3E;
+      --green-dark: #145C2E;
+      --green-tint: #E8F5E9;
+      --text:       #1A1A1A;
+      --text-mid:   #555;
+      --text-light: #888;
+      --border:     #E0E0E0;
+      --bg:         #F8FAFB;
+      --white:      #FFFFFF;
+      --code-bg:    #1E1E2E;
+      --code-text:  #CDD6F4;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1rem; font-weight: 700; color: var(--text);
+    }
+    .logo svg { flex-shrink: 0; }
+    .logo .badge {
+      font-size: 0.7rem; font-weight: 600;
+      background: var(--green-tint); color: var(--green);
+      padding: 2px 8px; border-radius: 4px;
+    }
+
+    .header-link { font-size: 0.85rem; color: var(--text-mid); }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: flex;
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 5%;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 220px; flex-shrink: 0;
+      padding: 32px 0;
+      position: sticky; top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      margin-bottom: 24px;
+    }
+
+    .sidebar-heading {
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--text-light);
+      padding: 0 0 8px;
+      display: block;
+    }
+
+    .sidebar-nav { list-style: none; }
+    .sidebar-nav li a {
+      display: block;
+      padding: 5px 12px;
+      font-size: 0.85rem; color: var(--text-mid);
+      border-left: 2px solid transparent;
+      border-radius: 0 4px 4px 0;
+      transition: all 0.15s;
+    }
+    .sidebar-nav li a:hover,
+    .sidebar-nav li a.active {
+      color: var(--green);
+      border-left-color: var(--green);
+      background: var(--green-tint);
+      text-decoration: none;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      flex: 1; min-width: 0;
+      padding: 40px 0 80px 48px;
+    }
+
+    .content section {
+      margin-bottom: 56px;
+      padding-bottom: 56px;
+      border-bottom: 1px solid var(--border);
+    }
+    .content section:last-child { border-bottom: none; }
+
+    h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; margin-top: 32px; }
+    h2:first-child { margin-top: 0; }
+    h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; margin-top: 24px; color: var(--text); }
+
+    p { font-size: 0.95rem; color: var(--text-mid); line-height: 1.7; margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    .lead {
+      font-size: 1.05rem; color: var(--text-mid); margin-bottom: 28px;
+    }
+
+    /* ── BADGE ── */
+    .plan-badge {
+      display: inline-flex; align-items: center;
+      font-size: 0.75rem; font-weight: 600;
+      padding: 3px 10px; border-radius: 4px;
+      background: var(--green-tint); color: var(--green);
+    }
+
+    /* ── TABLE ── */
+    .table-wrap { overflow-x: auto; margin: 16px 0; }
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    th {
+      text-align: left; font-weight: 600; font-size: 0.78rem;
+      text-transform: uppercase; letter-spacing: 0.4px;
+      color: var(--text-light);
+      padding: 8px 12px;
+      background: var(--bg);
+      border-bottom: 2px solid var(--border);
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-mid);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    td:first-child { color: var(--text); font-family: monospace; font-size: 0.85rem; }
+    td code { font-family: monospace; font-size: 0.85rem; background: var(--bg); padding: 1px 5px; border-radius: 3px; }
+
+    /* ── CODE ── */
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      border-radius: 10px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      margin: 16px 0;
+    }
+
+    code {
+      font-family: "SF Mono", "Fira Code", Consolas, monospace;
+    }
+
+    p code, li code {
+      background: var(--bg); color: var(--text);
+      padding: 1px 6px; border-radius: 4px;
+      font-size: 0.85em;
+    }
+
+    /* ── STEPS ── */
+    ol.steps { padding-left: 0; counter-reset: step; list-style: none; }
+    ol.steps li {
+      counter-increment: step;
+      display: flex; gap: 14px; margin-bottom: 12px;
+      font-size: 0.9rem; color: var(--text-mid); line-height: 1.6;
+    }
+    ol.steps li::before {
+      content: counter(step);
+      min-width: 26px; height: 26px;
+      background: var(--green); color: var(--white);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── CALLOUT ── */
+    .callout {
+      padding: 14px 18px;
+      border-radius: 8px;
+      border-left: 3px solid var(--green);
+      background: var(--green-tint);
+      font-size: 0.88rem; color: var(--text-mid);
+      margin: 16px 0;
+    }
+    .callout strong { color: var(--text); }
+
+    /* ── EVENT CARDS ── */
+    .event-list { display: flex; flex-direction: column; gap: 12px; }
+    .event-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+    .event-item code {
+      font-family: monospace; font-size: 0.82rem;
+      background: var(--bg); padding: 3px 8px; border-radius: 4px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .event-item p { font-size: 0.875rem; margin: 0; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 720px) {
+      .sidebar { display: none; }
+      .content { padding: 28px 0 60px; }
+      .layout { padding: 0 4%; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">
+    <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="8" fill="#1B7A3E"/>
+      <path d="M8 7h3.5v5.5l5-5.5H21l-6 6.5 6.5 7.5h-4.5L12 15v6H8V7z" fill="white"/>
+    </svg>
+    Kaynko POS
+    <span class="badge">Developers</span>
+  </a>
+  <a href="/" class="header-link">← Back to kaynko.app</a>
+</header>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <span class="sidebar-heading">Getting Started</span>
+      <ul class="sidebar-nav">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#quickstart">Quick Start</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-heading">Webhooks</span>
+      <ul class="sidebar-nav">
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#registering">Registering an Endpoint</a></li>
+        <li><a href="#payload">Payload Format</a></li>
+        <li><a href="#signing">Payload Signing</a></li>
+        <li><a href="#delivery-log">Delivery Log</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-heading">Events</span>
+      <ul class="sidebar-nav">
+        <li><a href="#events">All Events</a></li>
+        <li><a href="#sale-completed">sale.completed</a></li>
+        <li><a href="#sale-voided">sale.voided</a></li>
+        <li><a href="#session-events">session.opened/closed</a></li>
+        <li><a href="#debt-settled">debt.settled</a></li>
+        <li><a href="#product-events">product.created/updated</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-heading">API Keys</span>
+      <ul class="sidebar-nav">
+        <li><a href="#api-keys">API Keys</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <section id="overview">
+      <h1>Developer Documentation</h1>
+      <p class="lead">Integrate your systems with Kaynko POS using webhooks. Get real-time notifications when sales complete, cash sessions open and close, debts are settled, and more.</p>
+
+      <div class="callout">
+        <strong>Phase 1:</strong> Kaynko is an offline-first device app — all data lives on the device. Integration is push-based: the app sends events to your server as things happen. A REST API is planned for a future phase.
+      </div>
+
+      <h2>Integration Methods</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Method</th><th>Description</th><th>Plan required</th></tr>
+          <tr><td>Webhooks</td><td>HTTPS POST to your server on POS events</td><td><span class="plan-badge">Growth+</span></td></tr>
+          <tr><td>Google Sheets</td><td>Automatic sync of sales and expenses</td><td><span class="plan-badge">Growth+</span></td></tr>
+          <tr><td>Excel / CSV export</td><td>Manual export from the app</td><td><span class="plan-badge">All plans</span></td></tr>
+          <tr><td>REST API</td><td>Coming in a future phase</td><td>—</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="quickstart">
+      <h2>Quick Start</h2>
+      <ol class="steps">
+        <li>Make sure your Kaynko account is on the <strong>Growth plan or above</strong>.</li>
+        <li>In the app, go to <strong>Settings → Integrations</strong>.</li>
+        <li>Tap <strong>Add Webhook</strong> and enter your HTTPS endpoint URL.</li>
+        <li>Select the events you want (e.g. <code>sale.completed</code>).</li>
+        <li>Optionally add a <strong>Secret Key</strong> for HMAC signature verification.</li>
+        <li>Tap <strong>Test</strong> — your server should receive a ping request.</li>
+        <li>That's it. Events fire automatically as sales and other actions happen.</li>
+      </ol>
+    </section>
+
+    <section id="how-it-works">
+      <h2>How Webhooks Work</h2>
+      <p>When a POS event occurs, the app sends an HTTPS POST request to every registered endpoint that subscribes to that event type. Delivery is <strong>fire-and-forget</strong> — failures are logged in the app but do not affect POS operations.</p>
+      <div class="callout">
+        <strong>Important:</strong> Webhooks only fire for businesses on Growth, Business, or Partner plan. No events are sent on the Starter or Trial plan.
+      </div>
+      <p>Your endpoint must respond with an HTTP <code>2xx</code> status code within <strong>5 seconds</strong>. Return 200 immediately and process the payload asynchronously to avoid timeouts.</p>
+    </section>
+
+    <section id="registering">
+      <h2>Registering an Endpoint</h2>
+      <h3>URL Requirements</h3>
+      <p>Webhook URLs must start with <code>https://</code>. Plain HTTP and private network addresses (<code>localhost</code>, <code>192.168.x.x</code>, etc.) are rejected by the app.</p>
+      <h3>Secret Key</h3>
+      <p>Adding a secret key enables HMAC-SHA256 signature verification on every request. Strongly recommended for production — see <a href="#signing">Payload Signing</a>.</p>
+      <h3>Events</h3>
+      <p>An endpoint can subscribe to any combination of event types. Multiple endpoints can subscribe to the same event. Events not subscribed are silently skipped for that endpoint.</p>
+    </section>
+
+    <section id="payload">
+      <h2>Payload Format</h2>
+      <p>Every webhook request uses the same JSON envelope:</p>
+      <pre><code>{
+  "event": "sale.completed",
+  "data": { ... },
+  "timestamp": "2026-06-11T14:30:00.000Z"
+}</code></pre>
+      <p>The <code>event</code> field is the event type string. The <code>data</code> field contains event-specific fields — see each event below. The <code>timestamp</code> is the ISO 8601 UTC time the event was dispatched.</p>
+
+      <h3>Request Headers</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Header</th><th>Value</th><th>Notes</th></tr>
+          <tr><td>Content-Type</td><td><code>application/json</code></td><td>Always present</td></tr>
+          <tr><td>X-Kaynko-Event</td><td>e.g. <code>sale.completed</code></td><td>Always present</td></tr>
+          <tr><td>X-Kaynko-Signature</td><td><code>sha256=&lt;hmac-hex&gt;</code></td><td>Only if secret key configured</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="signing">
+      <h2>Payload Signing</h2>
+      <p>If you configure a secret key, the app signs every payload with HMAC-SHA256. Verify this signature before processing to confirm the request came from Kaynko POS.</p>
+      <pre><code>signature = HMAC-SHA256(key=secretKey, message=requestBodyBytes)
+header = "sha256=" + hex(signature)</code></pre>
+
+      <h3>Verify in Node.js</h3>
+      <pre><code>const crypto = require("crypto");
+
+function verifySignature(rawBody, secret, header) {
+  const expected = "sha256=" + crypto
+    .createHmac("sha256", secret)
+    .update(rawBody)
+    .digest("hex");
+  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(header));
+}
+
+app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
+  const sig = req.headers["x-kaynko-signature"] || "";
+  if (!verifySignature(req.body, process.env.KAYNKO_SECRET, sig)) {
+    return res.status(401).send("Unauthorized");
+  }
+  const event = JSON.parse(req.body);
+  processAsync(event); // handle in background
+  res.sendStatus(200);
+});</code></pre>
+
+      <h3>Verify in Python</h3>
+      <pre><code>import hmac, hashlib
+
+def verify_signature(raw_body: bytes, secret: str, header: str) -> bool:
+    expected = "sha256=" + hmac.new(
+        secret.encode("utf-8"), raw_body, hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(expected, header)
+
+@app.route("/webhook", methods=["POST"])
+def webhook():
+    sig = request.headers.get("X-Kaynko-Signature", "")
+    if not verify_signature(request.get_data(), KAYNKO_SECRET, sig):
+        return "Unauthorized", 401
+    event = request.get_json()
+    process_async.delay(event)  # e.g. Celery task
+    return "OK", 200</code></pre>
+
+      <div class="callout">Always use a <strong>constant-time comparison</strong> function — <code>hmac.compare_digest</code> in Python, <code>crypto.timingSafeEqual</code> in Node.js. Never use <code>===</code> or <code>==</code> for signature comparison.</div>
+    </section>
+
+    <section id="delivery-log">
+      <h2>Delivery Log</h2>
+      <p>The app keeps the last 10 delivery results in memory. To view them: go to <strong>Settings → Integrations</strong>, scroll to <strong>Recent Deliveries</strong>, and tap <strong>Refresh</strong>. Each entry shows the event type, endpoint name, time, and success/failure status.</p>
+      <div class="callout">The delivery log is in-memory only — it resets when the app restarts. Persist delivery results on your own server for long-term auditing.</div>
+    </section>
+
+    <section id="events">
+      <h2>Available Events</h2>
+      <div class="event-list">
+        <div class="event-item"><code>sale.completed</code><p>A sale is successfully recorded. Includes receipt number, totals, payment method, and line items.</p></div>
+        <div class="event-item"><code>sale.voided</code><p>A sale is voided. Stock is restored before this event fires.</p></div>
+        <div class="event-item"><code>session.opened</code><p>A cash session is opened with an opening float.</p></div>
+        <div class="event-item"><code>session.closed</code><p>A cash session is closed with the counted closing amount.</p></div>
+        <div class="event-item"><code>debt.settled</code><p>A debt payment is recorded against a credit sale.</p></div>
+        <div class="event-item"><code>product.created</code><p>A new product is added to the catalog.</p></div>
+        <div class="event-item"><code>product.updated</code><p>An existing product is edited.</p></div>
+      </div>
+    </section>
+
+    <section id="sale-completed">
+      <h2>sale.completed</h2>
+      <pre><code>{
+  "event": "sale.completed",
+  "data": {
+    "saleId": 42,
+    "receiptNumber": "KNK-0042",
+    "cashierId": 1,
+    "subtotal": 15.50,
+    "discountAmount": 0.00,
+    "vatAmount": 0.00,
+    "total": 15.50,
+    "paymentMethod": "cash",
+    "currency": "USD",
+    "customerName": "Jane Smith",
+    "customerType": "retail",
+    "createdAt": "2026-06-11T14:30:00.000Z",
+    "items": [
+      {
+        "productName": "Cooking Oil 2L",
+        "productCode": "SKU-001",
+        "quantity": 2,
+        "unitPrice": 3.50,
+        "lineTotal": 7.00
+      }
+    ]
+  },
+  "timestamp": "2026-06-11T14:30:00.000Z"
+}</code></pre>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Field</th><th>Type</th><th>Nullable</th><th>Notes</th></tr>
+          <tr><td>paymentMethod</td><td>string</td><td>No</td><td><code>cash</code>, <code>mobile_money</code>, <code>bank_transfer</code>, <code>card</code>, <code>credit</code>, <code>other</code></td></tr>
+          <tr><td>customerName</td><td>string</td><td>Yes</td><td>Null for walk-in customers</td></tr>
+          <tr><td>customerType</td><td>string</td><td>Yes</td><td><code>retail</code> or <code>wholesale</code></td></tr>
+          <tr><td>items[].productCode</td><td>string</td><td>Yes</td><td>SKU/barcode; null if not set</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="sale-voided">
+      <h2>sale.voided</h2>
+      <pre><code>{
+  "event": "sale.voided",
+  "data": {
+    "saleId": 42,
+    "receiptNumber": "KNK-0042",
+    "total": 15.50,
+    "paymentMethod": "cash",
+    "currency": "USD",
+    "cashierId": 1,
+    "voidedByCashierId": 2,
+    "voidReason": "Customer returned items",
+    "voidedAt": "2026-06-11T15:00:00.000Z"
+  },
+  "timestamp": "2026-06-11T15:00:00.000Z"
+}</code></pre>
+      <p><code>voidedByCashierId</code> is null when the original cashier voided their own sale. Stock is automatically restored before this event fires.</p>
+    </section>
+
+    <section id="session-events">
+      <h2>session.opened / session.closed</h2>
+      <pre><code>// session.opened
+{
+  "event": "session.opened",
+  "data": {
+    "sessionId": 5,
+    "cashierId": 1,
+    "sessionDate": "2026-06-11T00:00:00.000Z",
+    "openingCash": 20.00
+  }
+}
+
+// session.closed
+{
+  "event": "session.closed",
+  "data": {
+    "sessionId": 5,
+    "cashierId": 1,
+    "sessionDate": "2026-06-11T00:00:00.000Z",
+    "closingCash": 187.50
+  }
+}</code></pre>
+    </section>
+
+    <section id="debt-settled">
+      <h2>debt.settled</h2>
+      <pre><code>{
+  "event": "debt.settled",
+  "data": {
+    "debtId": 7,
+    "paymentAmount": 50.00,
+    "cashierId": 1
+  },
+  "timestamp": "2026-06-11T11:20:00.000Z"
+}</code></pre>
+    </section>
+
+    <section id="product-events">
+      <h2>product.created / product.updated</h2>
+      <pre><code>{
+  "event": "product.created",
+  "data": {
+    "productId": 22,
+    "productName": "Cooking Oil 2L",
+    "productCode": "SKU-022",
+    "action": "created"
+  }
+}</code></pre>
+    </section>
+
+    <section id="api-keys">
+      <h2>API Keys</h2>
+      <p>API keys are generated in <strong>Settings → Integrations → API Key</strong>. They require the <strong>Business plan or above</strong>.</p>
+      <p>In Phase 1, API keys are stored securely on the device but there are no REST API endpoints yet. They are infrastructure for a future REST API. Store your key securely — it cannot be recovered after generation, only regenerated.</p>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>
