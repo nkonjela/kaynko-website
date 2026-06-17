@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kaynko POS — Simple POS for Growing Retailers</title>
+  <meta name="description" content="Mobile-first, offline-capable point-of-sale for small and growing retailers. Simple enough for a first-time owner. Powerful enough for a growing chain.">
+  <meta property="og:title" content="Kaynko POS">
+  <meta property="og:description" content="Run your store from your phone. Works offline. Built for growing retailers.">
+  <meta property="og:type" content="website">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:        #1B7A3E;
+      --green-dark:   #145C2E;
+      --green-light:  #4CAF50;
+      --green-tint:   #E8F5E9;
+      --green-bg:     #F2FAF5;
+      --text:         #1A1A1A;
+      --text-mid:     #555;
+      --text-light:   #888;
+      --border:       #E0E0E0;
+      --white:        #FFFFFF;
+      --radius:       12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%;
+      height: 64px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.25rem; font-weight: 800; color: var(--green);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-logo svg { flex-shrink: 0; }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.9rem; font-weight: 500; color: var(--text-mid);
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--green); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--green); color: var(--white);
+    }
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); }
+
+    .btn-outline {
+      background: transparent; color: var(--green);
+      border: 2px solid var(--green);
+    }
+    .btn-outline:hover { background: var(--green-tint); }
+
+    .btn-lg { padding: 14px 32px; font-size: 1rem; border-radius: 10px; }
+
+    .nav-cta { display: flex; gap: 10px; }
+
+    /* ── HERO ── */
+    .hero {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+      padding: 80px 5% 72px;
+      background: var(--green-bg);
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px;
+      background: var(--green-tint);
+      border: 1px solid #c8e6c9;
+      border-radius: 100px;
+      font-size: 0.78rem; font-weight: 600; color: var(--green);
+      margin-bottom: 24px;
+      letter-spacing: 0.3px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      color: var(--text);
+      max-width: 700px;
+    }
+
+    .hero h1 span { color: var(--green); }
+
+    .hero p {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-mid);
+      max-width: 520px;
+      margin: 20px auto 36px;
+    }
+
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+
+    .hero-note {
+      margin-top: 18px;
+      font-size: 0.82rem; color: var(--text-light);
+    }
+
+    .hero-screen {
+      margin-top: 56px;
+      width: 100%; max-width: 860px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    }
+
+    .screen-mockup {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .screen-card {
+      background: var(--green-bg);
+      border-radius: 10px;
+      padding: 20px 16px;
+      text-align: left;
+    }
+    .screen-card .label {
+      font-size: 0.75rem; color: var(--text-light); font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .screen-card .value {
+      font-size: 1.5rem; font-weight: 800; color: var(--green); margin-top: 4px;
+    }
+    .screen-card .sub {
+      font-size: 0.8rem; color: var(--text-mid); margin-top: 2px;
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      padding: 80px 5%;
+      max-width: 1100px; margin: 0 auto;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 0.78rem; font-weight: 700; color: var(--green);
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800; letter-spacing: -0.5px; line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .section-sub {
+      font-size: 1rem; color: var(--text-mid);
+      max-width: 480px; margin-bottom: 48px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      padding: 28px 24px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .feature-card:hover {
+      box-shadow: 0 6px 24px rgba(0,0,0,0.07);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      width: 44px; height: 44px;
+      background: var(--green-tint);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 16px;
+    }
+
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.55; }
+
+    /* ── TRUST STRIP ── */
+    .trust-strip {
+      background: var(--green);
+      padding: 32px 5%;
+      display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
+    }
+
+    .trust-item {
+      text-align: center; color: var(--white);
+    }
+    .trust-item strong {
+      display: block; font-size: 1.8rem; font-weight: 800;
+    }
+    .trust-item span {
+      font-size: 0.85rem; opacity: 0.85;
+    }
+
+    /* ── PRICING ── */
+    .pricing {
+      padding: 80px 5%;
+      background: var(--green-bg);
+    }
+
+    .pricing-inner { max-width: 1000px; margin: 0 auto; }
+    .pricing-header { margin-bottom: 48px; }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      align-items: start;
+    }
+
+    .plan-card {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 28px;
+      position: relative;
+    }
+
+    .plan-card.featured {
+      border-color: var(--green);
+      box-shadow: 0 8px 32px rgba(27,122,62,0.15);
+    }
+
+    .plan-badge {
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: var(--green); color: var(--white);
+      font-size: 0.72rem; font-weight: 700;
+      padding: 4px 14px; border-radius: 100px;
+      letter-spacing: 0.5px; white-space: nowrap;
+    }
+
+    .plan-name { font-size: 0.9rem; font-weight: 700; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .plan-price {
+      margin: 12px 0 4px;
+      display: flex; align-items: flex-end; gap: 4px;
+    }
+    .plan-price .amount {
+      font-size: 2.6rem; font-weight: 800; line-height: 1; color: var(--text);
+    }
+    .plan-price .per { font-size: 0.9rem; color: var(--text-light); padding-bottom: 4px; }
+
+    .plan-tagline {
+      font-size: 0.88rem; color: var(--text-mid); margin-bottom: 24px;
+    }
+
+    .plan-divider { border: none; border-top: 1px solid var(--border); margin-bottom: 20px; }
+
+    .plan-features { list-style: none; margin-bottom: 28px; }
+    .plan-features li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.88rem; color: var(--text-mid);
+      padding: 5px 0;
+    }
+    .plan-features li::before {
+      content: "✓";
+      color: var(--green); font-weight: 700; flex-shrink: 0;
+    }
+
+    .plan-cta { width: 100%; text-align: center; display: block; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 0.95rem; }
+
+    .plan-trial {
+      text-align: center; font-size: 0.78rem; color: var(--text-light);
+      margin-top: 10px;
+    }
+
+    /* ── CTA BAND ── */
+    .cta-band {
+      padding: 80px 5%;
+      text-align: center;
+      max-width: 680px; margin: 0 auto;
+    }
+
+    .cta-band h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800; letter-spacing: -0.5px; margin-bottom: 14px;
+    }
+
+    .cta-band p { font-size: 1rem; color: var(--text-mid); margin-bottom: 32px; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--text);
+      color: rgba(255,255,255,0.7);
+      padding: 40px 5%;
+    }
+
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 20px;
+    }
+
+    .footer-logo { font-size: 1.1rem; font-weight: 800; color: var(--white); }
+
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 0.85rem; transition: color 0.15s; }
+    .footer-links a:hover { color: var(--white); }
+
+    .footer-copy { font-size: 0.82rem; width: 100%; text-align: center; margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 680px) {
+      nav { padding: 0 4%; }
+      .nav-links { display: none; }
+      .hero { padding: 56px 4% 48px; }
+      .hero-ctas { flex-direction: column; align-items: center; }
+      .screen-mockup { grid-template-columns: 1fr 1fr; }
+      .trust-strip { gap: 32px; }
+      .features, .pricing { padding: 56px 4%; }
+      .cta-band { padding: 56px 4%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="8" fill="#1B7A3E"/>
+      <path d="M8 7h3.5v5.5l5-5.5H21l-6 6.5 6.5 7.5h-4.5L12 15v6H8V7z" fill="white"/>
+    </svg>
+    Kaynko POS
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="/developers/">Developers</a></li>
+    <li><a href="mailto:support@kaynkoai.com">Contact</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="mailto:support@kaynkoai.com?subject=Kaynko POS — Get Started" class="btn btn-primary">Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#1B7A3E"/></svg>
+    Now in Pilot — 14-Day Free Trial
+  </div>
+  <h1>The POS that <span>gets out of your way</span></h1>
+  <p>Run your store, manage your team, and understand your business — all from your phone. No training required.</p>
+  <div class="hero-ctas">
+    <a href="mailto:support@kaynkoai.com?subject=Kaynko POS Pilot" class="btn btn-primary btn-lg">Start Free Trial</a>
+    <a href="#features" class="btn btn-outline btn-lg">See Features</a>
+  </div>
+  <p class="hero-note">14 days free · No credit card required · Works offline</p>
+
+  <div class="hero-screen">
+    <div class="screen-mockup">
+      <div class="screen-card">
+        <div class="label">Today's Sales</div>
+        <div class="value">$847</div>
+        <div class="sub">23 transactions</div>
+      </div>
+      <div class="screen-card">
+        <div class="label">Cash in Drawer</div>
+        <div class="value">$312</div>
+        <div class="sub">Session open 8h</div>
+      </div>
+      <div class="screen-card">
+        <div class="label">Checkout Speed</div>
+        <div class="value">&lt; 10s</div>
+        <div class="sub">Average per sale</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<div class="trust-strip">
+  <div class="trust-item">
+    <strong>14-day</strong>
+    <span>Free trial</span>
+  </div>
+  <div class="trust-item">
+    <strong>&lt;10s</strong>
+    <span>Checkout speed</span>
+  </div>
+  <div class="trust-item">
+    <strong>100%</strong>
+    <span>Offline capable</span>
+  </div>
+  <div class="trust-item">
+    <strong>256-bit</strong>
+    <span>Encrypted data</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-tag">Features</div>
+  <h2 class="section-title">Everything you need.<br>Nothing you don't.</h2>
+  <p class="section-sub">Built for retailers who need results, not software training.</p>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Lightning Checkout</h3>
+      <p>Complete a sale in under 10 seconds. Search products, apply discounts, take payment — done.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📡</div>
+      <h3>Works Offline</h3>
+      <p>No internet? No problem. All data lives on the device. Sync when you're back online.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📦</div>
+      <h3>Real-Time Inventory</h3>
+      <p>Stock levels update on every sale. Low-stock alerts so you never run out of your best sellers.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👥</div>
+      <h3>Team Management</h3>
+      <p>Multiple cashiers, PIN login, manager oversight, and activity tracking per staff member.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Reports & Export</h3>
+      <p>Daily summaries, sales history, and end-of-day reports. Export to PDF, Excel, or Google Sheets.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔗</div>
+      <h3>Webhooks & API</h3>
+      <p>Connect Kaynko to your accounting software or CRM. Real-time event webhooks on Business plan.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💳</div>
+      <h3>Flexible Payments</h3>
+      <p>Cash, mobile money, bank transfer, card, credit sales. Debt tracking for credit customers.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧾</div>
+      <h3>Receipts & Quotations</h3>
+      <p>Bluetooth thermal printer support. Professional PDF quotations. Receipts via WhatsApp.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="pricing-inner">
+    <div class="pricing-header">
+      <div class="section-tag">Pricing</div>
+      <h2 class="section-title">Simple, honest pricing</h2>
+      <p class="section-sub">Start free. Upgrade when your business grows.</p>
+    </div>
+
+    <div class="pricing-grid">
+
+      <!-- Starter -->
+      <div class="plan-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">
+          <span class="amount">$5</span>
+          <span class="per">/month</span>
+        </div>
+        <p class="plan-tagline">Run your store.</p>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li>1 cashier</li>
+          <li>Unlimited products</li>
+          <li>Sales & inventory</li>
+          <li>Cash session management</li>
+          <li>PDF & WhatsApp reports</li>
+          <li>Debt tracking</li>
+          <li>Thermal printer support</li>
+        </ul>
+        <a href="mailto:support@kaynkoai.com?subject=Kaynko POS — Starter Plan" class="btn btn-outline plan-cta">Get Started</a>
+        <p class="plan-trial">14-day free trial included</p>
+      </div>
+
+      <!-- Growth -->
+      <div class="plan-card featured">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">Growth</div>
+        <div class="plan-price">
+          <span class="amount">$29</span>
+          <span class="per">/month</span>
+        </div>
+        <p class="plan-tagline">Manage your team.</p>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li>Up to 5 cashiers</li>
+          <li>Everything in Starter</li>
+          <li>Manager dashboard</li>
+          <li>Excel export</li>
+          <li>Google Sheets sync</li>
+          <li>Webhooks & integrations</li>
+          <li>Quotations</li>
+        </ul>
+        <a href="mailto:support@kaynkoai.com?subject=Kaynko POS — Growth Plan" class="btn btn-primary plan-cta">Get Started</a>
+        <p class="plan-trial">14-day free trial included</p>
+      </div>
+
+      <!-- Business -->
+      <div class="plan-card">
+        <div class="plan-name">Business</div>
+        <div class="plan-price">
+          <span class="amount">$99</span>
+          <span class="per">/month</span>
+        </div>
+        <p class="plan-tagline">Scale your business.</p>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li>Unlimited cashiers</li>
+          <li>Everything in Growth</li>
+          <li>Unlimited locations</li>
+          <li>API access</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="mailto:support@kaynkoai.com?subject=Kaynko POS — Business Plan" class="btn btn-outline plan-cta">Contact Us</a>
+        <p class="plan-trial">14-day free trial included</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band">
+  <h2>Ready to run your store better?</h2>
+  <p>Join retailers already using Kaynko. Set up in minutes, first sale in under 5.</p>
+  <a href="mailto:support@kaynkoai.com?subject=Kaynko POS Pilot" class="btn btn-primary btn-lg">Start Free — 14 Days</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Kaynko POS</div>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/developers/">Developers</a>
+      <a href="mailto:support@kaynkoai.com">Support</a>
+      <a href="/privacy.html">Privacy Policy</a>
+    </div>
+  </div>
+  <p class="footer-copy">© 2026 Kaynko. All rights reserved. · <a href="mailto:support@kaynkoai.com">support@kaynkoai.com</a></p>
+</footer>
+
+</body>
+</html>
