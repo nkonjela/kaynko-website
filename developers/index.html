@@ -48,7 +48,7 @@
       display: flex; align-items: center; gap: 10px;
       font-size: 1rem; font-weight: 700; color: var(--text);
     }
-    .logo svg { flex-shrink: 0; }
+    .logo img { flex-shrink: 0; border-radius: 6px; }
     .logo .badge {
       font-size: 0.7rem; font-weight: 600;
       background: var(--green-tint); color: var(--green);
@@ -237,10 +237,7 @@
 
 <header>
   <a href="/" class="logo">
-    <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-      <rect width="28" height="28" rx="8" fill="#1B7A3E"/>
-      <path d="M8 7h3.5v5.5l5-5.5H21l-6 6.5 6.5 7.5h-4.5L12 15v6H8V7z" fill="white"/>
-    </svg>
+    <img src="/images/kaynko-pos-icon.png" alt="Kaynko POS" width="24" height="24">
     Kaynko POS
     <span class="badge">Developers</span>
   </a>
@@ -413,8 +410,8 @@ def webhook():
 
     <section id="delivery-log">
       <h2>Delivery Log</h2>
-      <p>The app keeps the last 10 delivery results in memory. To view them: go to <strong>Settings → Integrations</strong>, scroll to <strong>Recent Deliveries</strong>, and tap <strong>Refresh</strong>. Each entry shows the event type, endpoint name, time, and success/failure status.</p>
-      <div class="callout">The delivery log is in-memory only — it resets when the app restarts. Persist delivery results on your own server for long-term auditing.</div>
+      <p>Delivery attempts are logged in the app's database and persist across restarts. To view them: go to <strong>Settings → Integrations</strong>, scroll to <strong>Recent Deliveries</strong>, and tap <strong>Refresh</strong>. Each entry shows the event type, endpoint name, time, and success/failure status.</p>
+      <div class="callout"><strong>Tip:</strong> For long-term auditing or failure alerting, persist delivery results on your own server as well.</div>
     </section>
 
     <section id="events">

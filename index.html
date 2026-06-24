@@ -367,6 +367,29 @@
       border-radius: 100px; padding: 3px 12px;
     }
 
+    /* ── HOW IT WORKS ── */
+    .how-it-works {
+      background: var(--white);
+      padding: 80px 5%;
+      border-bottom: 1px solid var(--border);
+    }
+    .hiw-inner { max-width: 1100px; margin: 0 auto; }
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 32px; margin-top: 48px;
+    }
+    .step { text-align: center; }
+    .step-number {
+      width: 48px; height: 48px;
+      background: var(--green); color: var(--white);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 800;
+      margin: 0 auto 20px;
+    }
+    .step-content h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+    .step-content p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.65; max-width: 240px; margin: 0 auto; }
+
     /* ── FEATURES ── */
     .features-wrap { background: #FAFAFA; }
 
@@ -432,6 +455,7 @@
 
     .pricing-inner { max-width: 1000px; margin: 0 auto; }
     .pricing-header { margin-bottom: 52px; }
+    .pricing-risk { font-size: 0.82rem; color: var(--text-light); margin-top: 6px; }
 
     .pricing-grid {
       display: grid;
@@ -561,10 +585,18 @@
       .hero-visual { display: none; }
     }
 
+    @media (max-width: 768px) {
+      .steps-grid { grid-template-columns: 1fr; gap: 24px; }
+      .step { text-align: left; display: flex; align-items: flex-start; gap: 16px; }
+      .step-number { margin: 0; flex-shrink: 0; width: 40px; height: 40px; font-size: 0.95rem; }
+      .step-content p { max-width: none; margin: 0; }
+    }
+
     @media (max-width: 640px) {
       nav { padding: 0 4%; }
       .nav-links { display: none; }
       .hero { padding: 0 4%; }
+      .how-it-works { padding: 60px 4%; }
       .trust-strip { gap: 28px; }
       .features-wrap .features { padding: 60px 4%; }
       .pricing { padding: 60px 4%; }
@@ -587,7 +619,7 @@
     <li><a href="#features">Features</a></li>
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="/developers/">Developers</a></li>
-    <li><a href="mailto:support@kaynkoai.com">Contact</a></li>
+    <li><a href="mailto:support@kaynkoai.com?subject=Kaynko%20POS%20%E2%80%94%20Enquiry">Contact</a></li>
   </ul>
   <div>
     <a href="mailto:support@kaynkoai.com?subject=Kaynko POS — Get Started" class="btn btn-primary">Get Started</a>
@@ -604,7 +636,7 @@
         Android POS &middot; 14-Day Free Trial
       </div>
       <h1>Run your store.<br><span>Not your software.</span></h1>
-      <p>Lightning checkout, live inventory, cash management, and team oversight — on your Android phone. Works without internet.</p>
+      <p>Lightning checkout, live inventory, cash management, and team oversight — on your Android phone. Even when the internet goes out.</p>
       <div class="hero-ctas">
         <a href="mailto:support@kaynkoai.com?subject=Kaynko POS — Get Started" class="btn btn-primary btn-lg">Start Free Trial</a>
         <a href="#features" class="btn btn-outline btn-lg">See Features</a>
@@ -709,6 +741,41 @@
   <span class="store-type-pill">Pharmacy</span>
   <span class="store-type-pill">General Trade</span>
 </div>
+
+<!-- HOW IT WORKS -->
+<section class="how-it-works">
+  <div class="hiw-inner">
+    <div class="section-tag">How it works</div>
+    <h2 class="section-title">Up and running in minutes.</h2>
+    <div class="steps-grid">
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>Download &amp; set up</h3>
+          <p>Install from Google Play. Add your business name, products, and prices. Under 5 minutes, no help needed.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>Open your session</h3>
+          <p>Tap "Open Session", count your opening float, and you're live. Your cashier logs in with a PIN.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>Sell and close</h3>
+          <p>Complete a sale in under 10 seconds. At day's end, count your cash and read your report. Done.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
 <!-- FEATURES -->
 <div class="features-wrap">
@@ -852,6 +919,7 @@
       <div class="section-tag">Pricing</div>
       <h2 class="section-title">Simple, honest pricing.</h2>
       <p class="section-sub">Start free. Upgrade when your business grows.</p>
+      <p class="pricing-risk">No long-term contracts. Cancel anytime.</p>
     </div>
 
     <div class="pricing-grid">
@@ -943,11 +1011,11 @@
       <a href="#features">Features</a>
       <a href="#pricing">Pricing</a>
       <a href="/developers/">Developers</a>
-      <a href="mailto:support@kaynkoai.com">Support</a>
+      <a href="mailto:support@kaynkoai.com?subject=Kaynko%20POS%20%E2%80%94%20Support">Support</a>
       <a href="/privacy.html">Privacy Policy</a>
     </div>
   </div>
-  <p class="footer-copy">&copy; 2026 Kaynko POS. Built for retailers. &middot; <a href="mailto:support@kaynkoai.com">support@kaynkoai.com</a></p>
+  <p class="footer-copy">&copy; 2026 Kaynko POS. Built for retailers. &middot; <a href="mailto:support@kaynkoai.com?subject=Kaynko%20POS%20%E2%80%94%20Enquiry">support@kaynkoai.com</a></p>
 </footer>
 
 </body>
