@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payments — Kaynko POS</title>
+  <meta name="description" content="How payments work in Kaynko POS — cash, mobile money, card, bank transfer and credit, plus how to connect Paynow for confirmed card and mobile money payments.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #1B7A3E;
+      --green-dark: #145C2E;
+      --green-tint: #E8F5E9;
+      --text:       #1A1A1A;
+      --text-mid:   #555;
+      --text-light: #888;
+      --border:     #E0E0E0;
+      --bg:         #F8FAFB;
+      --white:      #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 1rem; font-weight: 700; color: var(--text); }
+    .logo img { width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0; }
+    .header-link { font-size: 0.85rem; color: var(--text-mid); }
+
+    .content { max-width: 760px; margin: 0 auto; padding: 48px 5% 80px; }
+
+    h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; }
+    h2 { font-size: 1.3rem; font-weight: 700; margin: 40px 0 12px; }
+    h2:first-of-type { margin-top: 24px; }
+    p { font-size: 0.95rem; color: var(--text-mid); line-height: 1.7; margin-bottom: 14px; }
+    .lead { font-size: 1.05rem; color: var(--text-mid); line-height: 1.7; }
+
+    ol.steps { padding-left: 0; counter-reset: step; list-style: none; margin: 16px 0; }
+    ol.steps li {
+      counter-increment: step;
+      display: flex; gap: 14px; margin-bottom: 14px;
+      font-size: 0.92rem; color: var(--text-mid); line-height: 1.6;
+    }
+    ol.steps li::before {
+      content: counter(step);
+      min-width: 26px; height: 26px;
+      background: var(--green); color: var(--white);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+    }
+
+    .callout {
+      padding: 14px 18px;
+      border-radius: 8px;
+      border-left: 3px solid var(--green);
+      background: var(--green-tint);
+      font-size: 0.9rem; color: var(--text-mid);
+      margin: 20px 0;
+    }
+    .callout strong { color: var(--text); }
+
+    .methods { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 24px; }
+    .method-pill {
+      font-size: 0.82rem; font-weight: 600;
+      background: var(--bg); border: 1px solid var(--border);
+      padding: 6px 14px; border-radius: 20px; color: var(--text-mid);
+    }
+
+    .back { display: inline-block; margin: 32px 0 0; font-size: 0.85rem; color: var(--text-light); }
+
+    footer { padding: 28px 5%; text-align: center; font-size: 0.82rem; color: var(--text-light); border-top: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="logo">
+      <img src="/images/kaynko-pos-icon.png" alt="Kaynko POS">
+      Kaynko POS
+    </a>
+    <a href="/" class="header-link">← Back to site</a>
+  </header>
+
+  <div class="content">
+    <h1>Payments</h1>
+    <p class="lead">Kaynko supports six payment methods at checkout. Here's the difference between recording a payment and having Kaynko confirm it automatically — and how to connect Paynow so card and mobile money payments are verified, not just noted down.</p>
+
+    <div class="methods">
+      <span class="method-pill">Cash</span>
+      <span class="method-pill">Mobile Money</span>
+      <span class="method-pill">Card</span>
+      <span class="method-pill">Bank Transfer</span>
+      <span class="method-pill">Credit</span>
+      <span class="method-pill">Other</span>
+    </div>
+
+    <h2>Recorded vs. confirmed</h2>
+    <p><strong>Recorded</strong> — you mark a sale as paid by a method outside Kaynko (for example, a bank's own card machine). Kaynko doesn't verify this; it trusts what the cashier enters. This is the only option for any method without a connected provider.</p>
+    <p><strong>Confirmed by a provider</strong> — Kaynko talks directly to a payment provider, and the sale is only created once that provider confirms the money actually arrived.</p>
+
+    <div class="callout">
+      <strong>Today:</strong> Paynow (Zimbabwe) is the only payment provider Kaynko connects to directly — card payments and EcoCash/OneMoney mobile money. Outside Zimbabwe, or without Paynow connected, every method is recorded rather than confirmed. That's expected, not a missing setting.
+    </div>
+
+    <h2>Connecting Paynow</h2>
+    <p>You'll need a free Paynow merchant account. The app will offer to open sign-up for you if you don't have one.</p>
+    <ol class="steps">
+      <li>In Kaynko, go to <strong>Settings → Payments</strong> and tap <strong>Connect</strong> next to Paynow.</li>
+      <li>No account yet? Tap <strong>Open Paynow Signup</strong>, register, then come back.</li>
+      <li>Inside your Paynow account: <strong>Other Ways To Get Paid → Create/Manage Shopping Carts → Create Advanced Integration</strong>.</li>
+      <li>Fill in a name, leave the Notification URL blank, choose your payment methods, and Save.</li>
+      <li>Copy the <strong>Integration ID</strong> shown, and tap <strong>Email Key To Company Address</strong> to get your <strong>Integration Key</strong>.</li>
+      <li>Paste both into Kaynko and tap <strong>Connect</strong>.</li>
+    </ol>
+
+    <h2 id="where-does-the-money-go">Where does the money go?</h2>
+    <p>Directly to <strong>your own bank account</strong> — the one you registered with Paynow. Kaynko never touches, holds, or has access to your money or your banking details. Kaynko only ever stores the Integration ID and Key needed to ask Paynow to process a payment on your behalf — the same way it would for any merchant using Paynow directly, without Kaynko in between.</p>
+
+    <h2>Why Kaynko never holds your money</h2>
+    <p>Kaynko is built as an orchestrator, not a processor — it connects to payment providers you already trust rather than becoming one itself. That means a Kaynko-side fund freeze or account hold is structurally impossible: your money only ever moves between your customer and your own bank account, through Paynow's own rails.</p>
+
+    <a class="back" href="/faq.html">See more in the FAQ →</a>
+  </div>
+
+  <footer>&copy; 2026 Kaynko POS. Built for retailers.</footer>
+</body>
+</html>
