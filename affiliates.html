@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Become an Affiliate — Kaynko POS</title>
+  <meta name="description" content="Apply to become a Kaynko POS affiliate and earn a recurring commission for every shop owner you refer.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #1B7A3E;
+      --green-dark: #145C2E;
+      --green-tint: #E8F5E9;
+      --text:       #1A1A1A;
+      --text-mid:   #555;
+      --text-light: #888;
+      --border:     #E0E0E0;
+      --bg:         #F8FAFB;
+      --white:      #FFFFFF;
+      --danger:     #C62828;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 1rem; font-weight: 700; color: var(--text); }
+    .logo img { width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0; }
+    .header-link { font-size: 0.85rem; color: var(--text-mid); }
+
+    .content { max-width: 560px; margin: 0 auto; padding: 48px 5% 80px; }
+
+    h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; }
+    p.lead { font-size: 1rem; color: var(--text-mid); line-height: 1.7; margin-bottom: 28px; }
+
+    label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .field { margin-bottom: 18px; }
+    input, select, textarea {
+      width: 100%;
+      font-size: 0.95rem;
+      font-family: inherit;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--green);
+      background: var(--white);
+    }
+    .hint { font-size: 0.78rem; color: var(--text-light); margin-top: 4px; }
+
+    .submit-btn {
+      width: 100%;
+      font-size: 0.95rem; font-weight: 700;
+      padding: 13px;
+      border: none; border-radius: 8px;
+      background: var(--green); color: var(--white);
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .submit-btn:hover { background: var(--green-dark); }
+    .submit-btn:disabled { background: var(--border); cursor: not-allowed; }
+
+    .status {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      display: none;
+    }
+    .status.error { display: block; background: #FDEDED; color: var(--danger); border: 1px solid #F5C6C6; }
+    .status.success { display: none; }
+
+    .success-view { display: none; text-align: center; padding: 40px 0; }
+    .success-view.visible { display: block; }
+    .success-view .icon { font-size: 48px; margin-bottom: 12px; }
+    .success-view h2 { font-size: 1.3rem; margin-bottom: 8px; }
+    .success-view p { color: var(--text-mid); line-height: 1.6; }
+
+    .form-view.hidden { display: none; }
+
+    .back { display: inline-block; margin-top: 32px; font-size: 0.85rem; color: var(--text-light); }
+
+    footer { padding: 28px 5%; text-align: center; font-size: 0.82rem; color: var(--text-light); border-top: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="logo">
+      <img src="/images/kaynko-pos-icon.png" alt="Kaynko POS">
+      Kaynko POS
+    </a>
+    <a href="/" class="header-link">← Back to site</a>
+  </header>
+
+  <div class="content">
+    <div class="form-view" id="formView">
+      <h1>Become an Affiliate</h1>
+      <p class="lead">Refer shop owners to Kaynko POS and earn a recurring commission for as long as they stay a customer. Tell us a bit about yourself and how you'd like to be paid — we review every application and get back to you with your referral code.</p>
+
+      <form id="affiliateForm">
+        <div class="field">
+          <label for="name">Your name or business name</label>
+          <input id="name" type="text" required>
+        </div>
+        <div class="field">
+          <label for="contact">Email or phone number</label>
+          <input id="contact" type="text" required>
+        </div>
+        <div class="field">
+          <label for="country">Country</label>
+          <select id="country" required>
+            <option value="" disabled selected>Select your country</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="payoutMethod">How should we pay you?</label>
+          <select id="payoutMethod">
+            <option value="ecocash">EcoCash</option>
+            <option value="bank_zw">Bank transfer (Zimbabwe)</option>
+            <option value="bank_intl">Bank transfer (international)</option>
+            <option value="stripe_connect">Stripe (if available)</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="field" id="field-ecocash">
+          <label for="ecocashNumber">EcoCash number</label>
+          <input id="ecocashNumber" type="text">
+        </div>
+        <div id="field-bank" style="display:none;">
+          <div class="field">
+            <label for="bankName">Bank name</label>
+            <input id="bankName" type="text">
+          </div>
+          <div class="field">
+            <label for="accountNumber">Account number</label>
+            <input id="accountNumber" type="text">
+          </div>
+          <div class="field">
+            <label for="accountHolder">Account holder name</label>
+            <input id="accountHolder" type="text">
+          </div>
+          <div class="field">
+            <label for="swift">SWIFT / branch code (optional)</label>
+            <input id="swift" type="text">
+          </div>
+        </div>
+        <div class="field" id="field-other" style="display:none;">
+          <label for="otherNotes">How would you like to be paid?</label>
+          <textarea id="otherNotes" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Submit Request</button>
+        <div class="status error" id="statusError"></div>
+      </form>
+    </div>
+
+    <div class="success-view" id="successView">
+      <div class="icon">✅</div>
+      <h2>Request submitted</h2>
+      <p>We've received your application and will review it shortly. We'll be in touch at the contact you provided once a decision is made.</p>
+    </div>
+
+    <a href="/faq.html" class="back">See more in the FAQ →</a>
+  </div>
+
+  <footer>&copy; 2026 Kaynko POS. Built for retailers.</footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-functions.js";
+
+    // TODO (founder, one-time setup): Firebase Console → Project settings →
+    // General → Your apps → Add app → Web, register "Kaynko Website", then
+    // paste that app's config object here. This is the public, client-side
+    // Firebase config (safe to expose — it's not a secret, same as any
+    // Firebase web app), NOT the same as the Paynow integration key, which
+    // never leaves the server (see functions/src/firestoreTypes.ts).
+    const firebaseConfig = {
+      apiKey: "PASTE_WEB_API_KEY_HERE",
+      authDomain: "kaynko-pos.firebaseapp.com",
+      projectId: "kaynko-pos",
+      storageBucket: "kaynko-pos.appspot.com",
+      appId: "PASTE_WEB_APP_ID_HERE",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const functions = getFunctions(app, "us-central1");
+
+    // Populate country select from the same list the app uses conceptually
+    // (ISO 3166-1 alpha-2) — a short curated list here rather than the
+    // app's full 200+ kCountryCodes table, since this form only needs the
+    // alpha-2 code, not a dial code.
+    const countries = [
+      ["ZW", "Zimbabwe"], ["ZA", "South Africa"], ["KE", "Kenya"], ["NG", "Nigeria"],
+      ["GH", "Ghana"], ["ZM", "Zambia"], ["BW", "Botswana"], ["MZ", "Mozambique"],
+      ["US", "United States"], ["GB", "United Kingdom"], ["CA", "Canada"],
+      ["AU", "Australia"], ["IN", "India"], ["PK", "Pakistan"], ["OTHER", "Other"],
+    ];
+    const countrySelect = document.getElementById("country");
+    for (const [code, name] of countries) {
+      const opt = document.createElement("option");
+      opt.value = code;
+      opt.textContent = name;
+      countrySelect.appendChild(opt);
+    }
+
+    const payoutMethodSelect = document.getElementById("payoutMethod");
+    function updatePayoutFields() {
+      const method = payoutMethodSelect.value;
+      document.getElementById("field-ecocash").style.display = method === "ecocash" ? "" : "none";
+      document.getElementById("field-bank").style.display = (method === "bank_zw" || method === "bank_intl") ? "" : "none";
+      document.getElementById("field-other").style.display = (method === "stripe_connect" || method === "other") ? "" : "none";
+    }
+    payoutMethodSelect.addEventListener("change", updatePayoutFields);
+    updatePayoutFields();
+
+    function collectPayoutDetails(method) {
+      if (method === "ecocash") {
+        const v = document.getElementById("ecocashNumber").value.trim();
+        return v ? { ecocashNumber: v } : null;
+      }
+      if (method === "bank_zw" || method === "bank_intl") {
+        const bankName = document.getElementById("bankName").value.trim();
+        const accountNumber = document.getElementById("accountNumber").value.trim();
+        const accountHolder = document.getElementById("accountHolder").value.trim();
+        if (!bankName || !accountNumber || !accountHolder) return null;
+        const swift = document.getElementById("swift").value.trim();
+        const details = { bankName, accountNumber, accountHolderName: accountHolder };
+        if (swift) details.swift = swift;
+        return details;
+      }
+      const notes = document.getElementById("otherNotes").value.trim();
+      return notes ? { notes } : null;
+    }
+
+    const form = document.getElementById("affiliateForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const statusError = document.getElementById("statusError");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      statusError.style.display = "none";
+
+      const name = document.getElementById("name").value.trim();
+      const contact = document.getElementById("contact").value.trim();
+      const country = countrySelect.value;
+      const payoutMethod = payoutMethodSelect.value;
+      const payoutDetails = collectPayoutDetails(payoutMethod);
+
+      if (!name || !contact || !country) {
+        statusError.textContent = "Please fill in all fields.";
+        statusError.style.display = "block";
+        return;
+      }
+      if (!payoutDetails) {
+        statusError.textContent = "Please fill in your payout details.";
+        statusError.style.display = "block";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting…";
+      try {
+        await signInAnonymously(auth);
+        const submitAffiliateRequest = httpsCallable(functions, "submitAffiliateRequest");
+        await submitAffiliateRequest({
+          businessOrPersonName: name,
+          contact,
+          country,
+          payoutMethod,
+          payoutDetails,
+        });
+        document.getElementById("formView").classList.add("hidden");
+        document.getElementById("successView").classList.add("visible");
+      } catch (err) {
+        statusError.textContent = "Could not submit your request: " + (err?.message || err);
+        statusError.style.display = "block";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Request";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Affiliate Requests — Kaynko POS Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #1B7A3E;
+      --green-dark: #145C2E;
+      --green-tint: #E8F5E9;
+      --text:       #1A1A1A;
+      --text-mid:   #555;
+      --text-light: #888;
+      --border:     #E0E0E0;
+      --bg:         #F8FAFB;
+      --white:      #FFFFFF;
+      --danger:     #C62828;
+      --danger-tint:#FDEDED;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 5%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    header h1 { font-size: 1.1rem; font-weight: 700; }
+    #signOutBtn { font-size: 0.82rem; color: var(--text-light); background: none; border: none; cursor: pointer; display: none; }
+
+    .content { max-width: 720px; margin: 0 auto; padding: 32px 5% 80px; }
+
+    /* Login */
+    #loginView { max-width: 340px; margin: 60px auto; }
+    #loginView h2 { font-size: 1.2rem; margin-bottom: 16px; }
+    #loginView input {
+      width: 100%; font-size: 0.95rem; padding: 10px 12px; margin-bottom: 10px;
+      border: 1px solid var(--border); border-radius: 8px; background: var(--white);
+    }
+    #loginView button {
+      width: 100%; font-size: 0.95rem; font-weight: 700; padding: 12px;
+      border: none; border-radius: 8px; background: var(--green); color: var(--white); cursor: pointer;
+    }
+    #loginError { color: var(--danger); font-size: 0.85rem; margin-top: 8px; display: none; }
+
+    /* Requests list */
+    #appView { display: none; }
+    .empty { color: var(--text-light); text-align: center; padding: 40px 0; }
+
+    .request-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .request-card .top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+    .request-card .name { font-weight: 700; font-size: 1rem; }
+    .request-card .country { font-size: 0.8rem; color: var(--text-light); }
+    .request-card .contact { font-size: 0.88rem; color: var(--text-mid); margin-bottom: 10px; }
+    .request-card .payout-method { font-size: 0.8rem; color: var(--text-mid); margin-bottom: 10px; }
+
+    .payout-details {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+      display: none;
+      font-family: ui-monospace, monospace;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .actions button {
+      font-size: 0.85rem; font-weight: 600; padding: 8px 14px;
+      border-radius: 6px; border: 1px solid var(--border); background: var(--white); cursor: pointer;
+    }
+    .actions button.primary { background: var(--green); color: var(--white); border-color: var(--green); }
+    .actions button.danger { background: var(--danger-tint); color: var(--danger); border-color: #F5C6C6; }
+    .actions button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .approved-code {
+      background: var(--green-tint);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-top: 8px;
+    }
+
+    .refresh-row { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+    .refresh-row button {
+      font-size: 0.82rem; color: var(--text-mid); background: none; border: 1px solid var(--border);
+      border-radius: 6px; padding: 6px 12px; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Kaynko POS — Affiliate Requests</h1>
+    <button id="signOutBtn">Sign out</button>
+  </header>
+
+  <div class="content">
+    <div id="loginView">
+      <h2>Founder sign-in</h2>
+      <input id="email" type="email" placeholder="Email" autocomplete="username">
+      <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+      <button id="loginBtn">Sign in</button>
+      <div id="loginError"></div>
+    </div>
+
+    <div id="appView">
+      <div class="refresh-row">
+        <button id="refreshBtn">Refresh</button>
+      </div>
+      <div id="requestsList"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import {
+      getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged,
+    } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-functions.js";
+
+    // TODO (founder, one-time setup): same Firebase web config as
+    // affiliates.html — fill in once, both pages share the same project.
+    // The founder sign-in account itself is a separate one-time setup step
+    // (Firebase Console → Authentication → Add user), and that user's UID
+    // must be granted the founder:true custom claim via
+    // scripts/set-founder-claim/ before this page's calls will succeed —
+    // signing in here only proves identity, the claim grants the actual
+    // founder-only permission (checked server-side in every function in
+    // functions/src/, never trusted from this page alone).
+    const firebaseConfig = {
+      apiKey: "PASTE_WEB_API_KEY_HERE",
+      authDomain: "kaynko-pos.firebaseapp.com",
+      projectId: "kaynko-pos",
+      storageBucket: "kaynko-pos.appspot.com",
+      appId: "PASTE_WEB_APP_ID_HERE",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const functions = getFunctions(app, "us-central1");
+
+    const loginView = document.getElementById("loginView");
+    const appView = document.getElementById("appView");
+    const signOutBtn = document.getElementById("signOutBtn");
+    const loginError = document.getElementById("loginError");
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      loginError.style.display = "none";
+      try {
+        await signInWithEmailAndPassword(
+          auth,
+          document.getElementById("email").value.trim(),
+          document.getElementById("password").value,
+        );
+      } catch (err) {
+        loginError.textContent = "Sign-in failed: " + (err?.message || err);
+        loginError.style.display = "block";
+      }
+    });
+    signOutBtn.addEventListener("click", () => signOut(auth));
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loginView.style.display = "none";
+        appView.style.display = "block";
+        signOutBtn.style.display = "inline";
+        loadRequests();
+      } else {
+        loginView.style.display = "block";
+        appView.style.display = "none";
+        signOutBtn.style.display = "none";
+      }
+    });
+
+    document.getElementById("refreshBtn").addEventListener("click", loadRequests);
+
+    function formatDetails(details) {
+      return Object.entries(details || {})
+        .map(([k, v]) => `${k}: ${v}`)
+        .join("\n");
+    }
+
+    async function loadRequests() {
+      const list = document.getElementById("requestsList");
+      list.innerHTML = '<div class="empty">Loading…</div>';
+      try {
+        const listPendingAffiliateRequests = httpsCallable(functions, "listPendingAffiliateRequests");
+        const result = await listPendingAffiliateRequests();
+        const requests = result.data.requests || [];
+        if (requests.length === 0) {
+          list.innerHTML = '<div class="empty">No pending requests.</div>';
+          return;
+        }
+        list.innerHTML = "";
+        for (const req of requests) {
+          list.appendChild(renderRequestCard(req));
+        }
+      } catch (err) {
+        list.innerHTML = `<div class="empty">Could not load requests: ${err?.message || err}</div>`;
+      }
+    }
+
+    function renderRequestCard(req) {
+      const card = document.createElement("div");
+      card.className = "request-card";
+      card.innerHTML = `
+        <div class="top">
+          <span class="name">${escapeHtml(req.businessOrPersonName)}</span>
+          <span class="country">${escapeHtml(req.country)}</span>
+        </div>
+        <div class="contact">${escapeHtml(req.contact)}</div>
+        <div class="payout-method">Payout method: ${escapeHtml(req.payoutMethod)}</div>
+        <div class="payout-details" id="details-${req.requestId}"></div>
+        <div class="actions">
+          <button class="view-details">View payout details</button>
+          <button class="primary approve">Approve</button>
+          <button class="danger decline">Decline</button>
+        </div>
+      `;
+
+      card.querySelector(".view-details").addEventListener("click", async (e) => {
+        const btn = e.target;
+        const box = card.querySelector(`#details-${req.requestId}`);
+        if (box.style.display === "block") {
+          box.style.display = "none";
+          return;
+        }
+        btn.disabled = true;
+        try {
+          const getAffiliatePayoutDetails = httpsCallable(functions, "getAffiliatePayoutDetails");
+          const result = await getAffiliatePayoutDetails({ requestId: req.requestId });
+          box.textContent = formatDetails(result.data.details) + (result.data.notes ? `\nnotes: ${result.data.notes}` : "");
+          box.style.display = "block";
+        } catch (err) {
+          box.textContent = "Could not load payout details: " + (err?.message || err);
+          box.style.display = "block";
+        } finally {
+          btn.disabled = false;
+        }
+      });
+
+      card.querySelector(".approve").addEventListener("click", async (e) => {
+        if (!confirm(`Approve ${req.businessOrPersonName} as an affiliate?`)) return;
+        const buttons = card.querySelectorAll("button");
+        buttons.forEach((b) => (b.disabled = true));
+        try {
+          const approveAffiliateRequest = httpsCallable(functions, "approveAffiliateRequest");
+          const result = await approveAffiliateRequest({ requestId: req.requestId });
+          const codeBox = document.createElement("div");
+          codeBox.className = "approved-code";
+          codeBox.textContent = `Approved — code: ${result.data.code}`;
+          card.appendChild(codeBox);
+          card.querySelector(".actions").remove();
+        } catch (err) {
+          alert("Could not approve: " + (err?.message || err));
+          buttons.forEach((b) => (b.disabled = false));
+        }
+      });
+
+      card.querySelector(".decline").addEventListener("click", async () => {
+        const reason = prompt("Reason for declining (optional):") || undefined;
+        const buttons = card.querySelectorAll("button");
+        buttons.forEach((b) => (b.disabled = true));
+        try {
+          const declineAffiliateRequest = httpsCallable(functions, "declineAffiliateRequest");
+          await declineAffiliateRequest({ requestId: req.requestId, reason });
+          card.remove();
+        } catch (err) {
+          alert("Could not decline: " + (err?.message || err));
+          buttons.forEach((b) => (b.disabled = false));
+        }
+      });
+
+      return card;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = String(str ?? "");
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
