@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bluetooth Thermal Printer Setup for Android POS Apps: A Step-by-Step Guide</title>
+  <meta name="description" content="How to pair a Bluetooth thermal receipt printer with an Android POS app like Kaynko POS, and how to troubleshoot it if it won't connect or print.">
+  <link rel="canonical" href="https://kaynko.app/blog/bluetooth-thermal-printer-pos-setup.html">
+  <link rel="icon" type="image/png" href="/images/kaynko-pos-icon.png">
+  <meta property="og:title" content="Bluetooth Thermal Printer Setup for Android POS Apps">
+  <meta property="og:description" content="A step-by-step guide to pairing a Bluetooth receipt printer with an Android POS app.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://kaynko.app/blog/bluetooth-thermal-printer-pos-setup.html">
+  <meta property="og:image" content="https://kaynko.app/images/kaynko-pos-icon.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Bluetooth Thermal Printer Setup for Android POS Apps">
+  <meta name="twitter:description" content="Pairing a Bluetooth receipt printer with an Android POS app, step by step.">
+  <meta name="twitter:image" content="https://kaynko.app/images/kaynko-pos-icon.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Bluetooth Thermal Printer Setup for Android POS Apps: A Step-by-Step Guide",
+    "description": "How to pair a Bluetooth thermal receipt printer with an Android POS app, and troubleshoot common connection issues.",
+    "author": { "@type": "Organization", "name": "Kaynko POS" },
+    "publisher": { "@type": "Organization", "name": "Kaynko POS", "logo": { "@type": "ImageObject", "url": "https://kaynko.app/images/kaynko-pos-icon.png" } },
+    "datePublished": "2026-11-07",
+    "mainEntityOfPage": "https://kaynko.app/blog/bluetooth-thermal-printer-pos-setup.html"
+  }
+  </script>
+  <link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="/" class="logo">
+      <img src="/images/kaynko-pos-icon.png" alt="Kaynko POS">
+      Kaynko POS
+    </a>
+    <a href="/blog/" class="header-link">← Back to blog</a>
+  </header>
+
+  <div class="content narrow">
+    <div class="eyebrow">Hardware setup</div>
+    <h1>Bluetooth Thermal Printer Setup for Android POS Apps: A Step-by-Step Guide</h1>
+    <p class="post-meta">Kaynko POS Team · 6 min read</p>
+
+    <p class="lead">A Bluetooth thermal printer is the most common piece of extra hardware a shop adds to a phone-based POS setup. It's inexpensive, needs no ink or toner, and pairs with the phone the same way a Bluetooth speaker or headset would. Here's how to get one working, and what to check if it isn't.</p>
+
+    <h2>What you need</h2>
+    <ul>
+      <li>A Bluetooth thermal receipt printer (58mm or 80mm paper width, depending on the model).</li>
+      <li>Thermal paper for that printer.</li>
+      <li>An Android phone with Bluetooth and location permissions enabled (Android requires location permission for Bluetooth device scanning — this is an Android platform requirement, not specific to any one app).</li>
+    </ul>
+
+    <h2>Pairing the printer</h2>
+    <ol>
+      <li>Turn the printer on and make sure it has paper loaded.</li>
+      <li>Put the printer into pairing mode (usually a button press — check the printer's own manual, since this varies by model).</li>
+      <li>In Kaynko POS, go to <strong>Settings → Printer</strong> and tap to scan for nearby devices.</li>
+      <li>Select your printer from the list and confirm the pairing.</li>
+      <li>Print a test receipt to confirm the connection before relying on it for a real sale.</li>
+    </ol>
+    <p>Once paired, the app remembers the printer and reconnects to it automatically the next time you open it — there's no need to re-pair every session.</p>
+
+    <h2>If it won't connect</h2>
+    <p>Most Bluetooth printer problems come down to one of a few things:</p>
+    <ul>
+      <li><strong>Bluetooth or location permission not granted.</strong> Check the app's permissions in Android's system settings if the scan finds nothing.</li>
+      <li><strong>The printer isn't actually in pairing mode.</strong> Many printers need the pairing button held, not just tapped, or need to be freshly powered on.</li>
+      <li><strong>The printer is already paired to another phone's Bluetooth settings.</strong> Forget the device in the other phone's system Bluetooth menu first.</li>
+      <li><strong>Low battery.</strong> Some printers behave unreliably, or won't pair at all, when their battery is nearly empty.</li>
+    </ul>
+
+    <h2>If it connects but prints garbled text</h2>
+    <p>This is almost always a paper-width mismatch — a 58mm printer fed with 80mm-formatted output (or vice versa) will produce cut-off or stretched text. Confirm the printer's actual paper width against what's loaded, and check the app's receipt settings match it.</p>
+
+    <h2>Why Bluetooth instead of a cable or Wi-Fi printer</h2>
+    <p>Bluetooth printers need no cables running across a counter and no shared Wi-Fi network to be reachable — the phone talks directly to the printer. That matters especially for a shop that can't always count on a stable internet connection: printing a receipt never depends on the internet being up, only on the printer being paired and in range.</p>
+
+    <div class="cta-box">
+      <h3>Try it with your own printer</h3>
+      <p>Kaynko POS is free to try for 14 days, no credit card required.</p>
+      <a href="https://play.google.com/store/apps/details?id=app.kaynko.pos&referrer=utm_source%3Dwebsite%26utm_medium%3Dblog%26utm_campaign%3Dblog_printer_setup" target="_blank" rel="noopener" class="btn btn-primary">Download on Google Play</a>
+    </div>
+
+    <a href="/blog/" class="back">← More guides</a>
+  </div>
+
+  <footer class="site-footer">&copy; 2026 Kaynko POS. Built for retailers.</footer>
+</body>
+</html>

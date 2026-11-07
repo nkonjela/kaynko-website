@@ -3,11 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kaynko POS — Mobile Point-of-Sale for Retailers</title>
-  <meta name="description" content="Mobile-first, offline-capable point-of-sale for small and growing retailers. Simple enough for a first-time owner. Powerful enough for a growing chain.">
-  <meta property="og:title" content="Kaynko POS">
-  <meta property="og:description" content="Run your store from your Android phone. Works offline. Built for growing retailers.">
+  <title>Kaynko POS — Offline Mobile Point of Sale App for Android Retailers</title>
+  <meta name="description" content="Kaynko POS is an offline-first mobile point-of-sale app for Android. Turn any phone into a cash register — fast checkout, barcode scanning, Bluetooth printing, and inventory tracking, with or without internet. Free 14-day trial.">
+  <link rel="canonical" href="https://kaynko.app/">
+  <link rel="icon" type="image/png" href="/images/kaynko-pos-icon.png">
+  <!-- TODO (founder, one-time setup): paste the Google Search Console
+       verification meta tag here once kaynko.app is registered at
+       search.google.com/search-console, then submit /sitemap.xml there
+       and in Bing Webmaster Tools. -->
+  <meta property="og:title" content="Kaynko POS — Offline Mobile Point of Sale App for Android Retailers">
+  <meta property="og:description" content="Turn any Android phone into a cash register. Works fully offline. Under-10-second checkout, barcode scanning, Bluetooth printing, and inventory tracking for small retailers.">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kaynko.app/">
+  <meta property="og:image" content="https://kaynko.app/images/kaynko-pos-icon.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Kaynko POS — Offline Mobile Point of Sale App for Android Retailers">
+  <meta name="twitter:description" content="Turn any Android phone into a cash register. Works fully offline, even when your internet doesn't.">
+  <meta name="twitter:image" content="https://kaynko.app/images/kaynko-pos-icon.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Kaynko POS",
+    "url": "https://kaynko.app/",
+    "logo": "https://kaynko.app/images/kaynko-pos-icon.png",
+    "email": "support@kaynko.app"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Kaynko POS",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Android",
+    "description": "Offline-first mobile point-of-sale app for small and growing retailers. Fast checkout, barcode scanning, Bluetooth receipt printing, inventory and cash management, customer credit tracking, and reporting.",
+    "offers": [
+      { "@type": "Offer", "name": "Starter", "price": "5", "priceCurrency": "USD", "priceValidUntil": "2027-12-31", "description": "1 cashier, unlimited products, sales & inventory, cash session management, PDF & WhatsApp reports, debt tracking, thermal printer support. 14-day free trial, no card required." },
+      { "@type": "Offer", "name": "Growth", "price": "12", "priceCurrency": "USD", "priceValidUntil": "2027-12-31", "description": "Up to 5 cashiers, manager dashboard, Excel export, Google Sheets sync, webhooks & integrations, quotations. 14-day free trial, no card required." },
+      { "@type": "Offer", "name": "Business", "price": "20", "priceCurrency": "USD", "priceValidUntil": "2027-12-31", "description": "Unlimited cashiers, API access, priority support. 14-day free trial, no card required." }
+    ]
+  }
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -123,15 +160,24 @@
     }
 
     .hero-copy h1 {
-      font-size: clamp(2.4rem, 4.5vw, 3.6rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -1.5px;
-      color: var(--text);
-      margin-bottom: 20px;
+      font-size: clamp(1.5rem, 2.6vw, 1.9rem);
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.3px;
+      color: var(--text-mid);
+      margin-bottom: 10px;
     }
 
     .hero-copy h1 span { color: var(--green); }
+
+    .hero-tagline {
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.3px;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
 
     .hero-copy p {
       font-size: 1.08rem;
@@ -611,6 +657,48 @@
       .footer-inner { flex-direction: column; text-align: center; }
       .footer-links { justify-content: center; }
     }
+
+    /* ── iOS WAITLIST MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.5);
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--white);
+      border-radius: 16px;
+      max-width: 420px; width: 100%;
+      padding: 32px 28px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 14px; right: 16px;
+      background: none; border: none;
+      font-size: 1.3rem; color: var(--text-light);
+      cursor: pointer; line-height: 1;
+    }
+    .modal-box h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; }
+    .modal-box p.modal-sub { font-size: 0.9rem; color: var(--text-mid); line-height: 1.6; margin-bottom: 20px; }
+    .modal-box label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .modal-box input[type="email"] {
+      width: 100%; font-size: 0.95rem; font-family: inherit;
+      padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+      background: #F8FAFB; color: var(--text); margin-bottom: 14px;
+    }
+    .modal-box input[type="email"]:focus { outline: none; border-color: var(--green); background: var(--white); }
+    .modal-submit {
+      width: 100%; font-size: 0.93rem; font-weight: 700;
+      padding: 12px; border: none; border-radius: 8px;
+      background: var(--green); color: var(--white); cursor: pointer;
+    }
+    .modal-submit:hover { background: var(--green-dark); }
+    .modal-submit:disabled { background: var(--border); cursor: not-allowed; }
+    .modal-status { margin-top: 12px; font-size: 0.85rem; display: none; }
+    .modal-status.error { display: block; color: #C62828; }
+    .modal-status.success { display: block; color: var(--green); font-weight: 600; }
   </style>
 </head>
 <body>
@@ -625,6 +713,7 @@
     <li><a href="#features">Features</a></li>
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#affiliate">Refer &amp; Earn</a></li>
+    <li><a href="/blog/">Blog</a></li>
     <li><a href="/faq.html">FAQ</a></li>
     <li><a href="/developers/">Developers</a></li>
     <li><a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@kaynko.app&su=Kaynko%20POS%20%E2%80%94%20Enquiry" target="_blank" rel="noopener">Contact</a></li>
@@ -643,7 +732,8 @@
         <div class="badge-dot"></div>
         Android POS &middot; 14-Day Free Trial
       </div>
-      <h1>Run your store.<br><span>Not your software.</span></h1>
+      <h1>Kaynko POS — Offline Mobile Point of Sale App for Android Retailers</h1>
+      <p class="hero-tagline">Run your store. Not your software.</p>
       <p>Lightning checkout, live inventory, cash management, and team oversight — on your Android phone. Even when the internet goes out.</p>
       <div class="hero-ctas">
         <a href="https://play.google.com/store/apps/details?id=app.kaynko.pos" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
@@ -652,9 +742,9 @@
           </svg>
           Download on Google Play
         </a>
-        <a href="#features" class="btn btn-outline btn-lg">See Features</a>
+        <button type="button" class="btn btn-outline btn-lg" id="iosWaitlistOpenBtn">iOS / iPhone App — Join the Waitlist</button>
       </div>
-      <p class="hero-note">Free for 14 days &middot; No credit card required &middot; Android 8.0+</p>
+      <p class="hero-note">Free for 14 days &middot; No credit card required &middot; Android 8.0+ &middot; <a href="#features">See features</a></p>
     </div>
 
     <div class="hero-visual">
@@ -744,8 +834,8 @@
 <!-- STORE TYPES -->
 <div class="store-types">
   <span class="store-types-label">Works for</span>
-  <span class="store-type-pill">Grocery</span>
-  <span class="store-type-pill">Clothing</span>
+  <a href="/retail/grocery-store.html" class="store-type-pill">Grocery</a>
+  <a href="/retail/clothing-boutique.html" class="store-type-pill">Clothing</a>
   <span class="store-type-pill">Electronics</span>
   <span class="store-type-pill">Beauty</span>
   <span class="store-type-pill">Hardware</span>
@@ -992,7 +1082,6 @@
         <ul class="plan-features">
           <li>Unlimited cashiers</li>
           <li>Everything in Growth</li>
-          <li>Unlimited locations</li>
           <li>API access</li>
           <li>Priority support</li>
         </ul>
@@ -1010,7 +1099,7 @@
     <div class="section-tag">Refer &amp; earn</div>
     <h2 class="section-title">Know a shop owner who needs this?</h2>
     <p class="section-sub">Refer other retailers to Kaynko POS and earn a share of their subscription for as long as they stay a customer.</p>
-    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@kaynko.app&su=Kaynko%20POS%20%E2%80%94%20Affiliate%20Program" target="_blank" rel="noopener" class="btn btn-outline">Become an Affiliate</a>
+    <a href="/affiliates.html" class="btn btn-outline">Become an Affiliate</a>
   </div>
 </section>
 
@@ -1033,6 +1122,7 @@
       <a href="#pricing">Pricing</a>
       <a href="#affiliate">Refer &amp; Earn</a>
       <a href="/payments.html">Payments</a>
+      <a href="/blog/">Blog</a>
       <a href="/faq.html">FAQ</a>
       <a href="/developers/">Developers</a>
       <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@kaynko.app&su=Kaynko%20POS%20%E2%80%94%20Support" target="_blank" rel="noopener">Support</a>
@@ -1042,6 +1132,103 @@
   </div>
   <p class="footer-copy">&copy; 2026 Kaynko POS. Built for retailers. &middot; <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@kaynko.app&su=Kaynko%20POS%20%E2%80%94%20Enquiry" target="_blank" rel="noopener">support@kaynko.app</a></p>
 </footer>
+
+<!-- iOS WAITLIST MODAL -->
+<div class="modal-overlay" id="iosWaitlistOverlay">
+  <div class="modal-box">
+    <button type="button" class="modal-close" id="iosWaitlistCloseBtn" aria-label="Close">&times;</button>
+    <div id="iosWaitlistFormView">
+      <h3>Kaynko POS for iOS — Coming Soon</h3>
+      <p class="modal-sub">Be the first to know when Kaynko iOS POS launches. Get early beta access to the fastest offline iPhone cash register.</p>
+      <form id="iosWaitlistForm">
+        <label for="iosWaitlistEmail">Email address</label>
+        <input type="email" id="iosWaitlistEmail" required placeholder="you@example.com">
+        <button type="submit" class="modal-submit" id="iosWaitlistSubmitBtn">Join the Waitlist</button>
+        <div class="modal-status error" id="iosWaitlistError"></div>
+      </form>
+    </div>
+    <div id="iosWaitlistSuccessView" style="display:none; text-align:center; padding: 12px 0;">
+      <div style="font-size:40px; margin-bottom:10px;">&#9993;</div>
+      <h3>You're on the list</h3>
+      <p class="modal-sub">We'll email you the moment Kaynko POS for iOS is ready for early access.</p>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-functions.js";
+
+  // Same public, client-side Firebase web config already used by
+  // affiliates.html — safe to expose (not a secret), registered once by
+  // the founder in Firebase Console → Project settings → Your apps.
+  const firebaseConfig = {
+    apiKey: "AIzaSyAYZOFURj_j6kHM4FKcwN2QfTXD8i1icpU",
+    authDomain: "kaynko-pos.firebaseapp.com",
+    projectId: "kaynko-pos",
+    storageBucket: "kaynko-pos.firebasestorage.app",
+    messagingSenderId: "444868439321",
+    appId: "1:444868439321:web:c58a34371a914f449fe988",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const functions = getFunctions(app, "us-central1");
+
+  const overlay = document.getElementById("iosWaitlistOverlay");
+  const openBtn = document.getElementById("iosWaitlistOpenBtn");
+  const closeBtn = document.getElementById("iosWaitlistCloseBtn");
+  const form = document.getElementById("iosWaitlistForm");
+  const emailInput = document.getElementById("iosWaitlistEmail");
+  const submitBtn = document.getElementById("iosWaitlistSubmitBtn");
+  const errorBox = document.getElementById("iosWaitlistError");
+  const formView = document.getElementById("iosWaitlistFormView");
+  const successView = document.getElementById("iosWaitlistSuccessView");
+
+  openBtn.addEventListener("click", () => overlay.classList.add("open"));
+  closeBtn.addEventListener("click", () => overlay.classList.remove("open"));
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.classList.remove("open"); });
+
+  // Same UTM-capture pattern already used for Play Install Referrer
+  // attribution (see docs/REVENUE_TRACKING.md) — if this page was reached
+  // via a tagged link, the waitlist signup carries that context too.
+  function currentUtmParams() {
+    const params = new URLSearchParams(window.location.search);
+    const utm = {};
+    for (const key of ["utm_source", "utm_medium", "utm_campaign", "utm_term"]) {
+      const v = params.get(key);
+      if (v) utm[key] = v;
+    }
+    return utm;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBox.style.display = "none";
+    const email = emailInput.value.trim();
+    if (!email) {
+      errorBox.textContent = "Please enter your email address.";
+      errorBox.style.display = "block";
+      return;
+    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Joining…";
+    try {
+      await signInAnonymously(auth);
+      const submitIosWaitlistSignup = httpsCallable(functions, "submitIosWaitlistSignup");
+      await submitIosWaitlistSignup({ email, utm: currentUtmParams() });
+      formView.style.display = "none";
+      successView.style.display = "block";
+    } catch (err) {
+      errorBox.textContent = "Could not join the waitlist: " + (err?.message || err);
+      errorBox.style.display = "block";
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Join the Waitlist";
+    }
+  });
+</script>
 
 </body>
 </html>

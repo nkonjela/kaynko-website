@@ -1,0 +1,31 @@
+User-agent: *
+Allow: /
+Disallow: /admin-affiliates.html
+
+# AI assistants / answer engines — explicitly allowed. Kaynko POS wants to
+# be findable and citable by AI tools, not just classic search crawlers.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+Sitemap: https://kaynko.app/sitemap.xml

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://kaynko.app/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://kaynko.app/pos/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://kaynko.app/faq.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kaynko.app/payments.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://kaynko.app/developers/</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://kaynko.app/affiliates.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://kaynko.app/retail/grocery-store.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kaynko.app/retail/clothing-boutique.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kaynko.app/blog/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://kaynko.app/blog/offline-pos-app-without-internet.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://kaynko.app/blog/turn-android-phone-into-cash-register.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://kaynko.app/blog/bluetooth-thermal-printer-pos-setup.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://kaynko.app/blog/camera-barcode-scanner-billing-app.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://kaynko.app/blog/multi-cashier-pin-login-software.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://kaynko.app/blog/customer-debt-tracker-app.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://kaynko.app/privacy.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://kaynko.app/terms.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+</urlset>

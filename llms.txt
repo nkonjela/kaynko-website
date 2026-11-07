@@ -1,0 +1,51 @@
+# Kaynko POS
+
+> Kaynko POS is a mobile, offline-first point-of-sale app for small and growing retail shops. It runs on Android phones and tablets and turns a single device into a full cash register — checkout, inventory, cash sessions, customer debt tracking, and reporting — without needing a constant internet connection.
+
+## Who it's for
+
+Small and growing general-retail businesses: grocery stores, clothing and boutique shops, electronics stores, pharmacies, hardware stores, and general-trade kiosks. Built mobile-first for markets where internet connectivity can be unreliable. Not built for restaurants, salons, or appointment/booking-based businesses.
+
+## Platform
+
+- Android: live today on Google Play (`app.kaynko.pos`).
+- iOS/iPhone: not yet released. A waitlist is open at https://kaynko.app/ for early access when it launches.
+
+## Core features
+
+- Offline-first: sales, stock, receipts, and reports all work with no internet connection; data syncs when a connection returns.
+- Checkout designed to complete a sale in under 10 seconds.
+- Camera-based barcode scanning, plus support for external Bluetooth barcode scanners.
+- Bluetooth thermal receipt printer support.
+- Multi-cashier PIN logins with manager-approval controls on sensitive actions (voids, returns, stock adjustments).
+- Real-time inventory tracking with low-stock alerts.
+- Customer credit/debt tracking (sales on account, partial payments, credit limits).
+- Reporting and export to PDF, Excel, and CSV; end-of-day cash reconciliation.
+- Automatic encrypted backup to the owner's own Google Drive.
+- Quotations, including tiered (Good/Better/Best) pricing options, shareable as PDF or via WhatsApp.
+- Optional payment confirmation via Paynow (Zimbabwe) for card and mobile money (EcoCash/OneMoney); every other payment method (cash, bank transfer, other mobile money, credit) is recorded by the cashier rather than provider-confirmed. Kaynko never holds merchant funds — payments go directly to the merchant's own bank account.
+
+## Pricing
+
+Every plan starts with a free 14-day trial, no credit card required.
+
+- Starter — $5/month — 1 cashier.
+- Growth — $12/month — up to 5 cashiers, manager dashboard, Excel export, Google Sheets sync, webhooks.
+- Business — $20/month — unlimited cashiers, API access, priority support.
+
+Full pricing and feature breakdown: https://kaynko.app/#pricing
+
+## Key links
+
+- Homepage: https://kaynko.app/
+- FAQ: https://kaynko.app/faq.html
+- How payments work: https://kaynko.app/payments.html
+- Developer / webhook documentation: https://kaynko.app/developers/
+- Blog (setup guides, how-tos): https://kaynko.app/blog/
+- Affiliate program: https://kaynko.app/affiliates.html
+- Google Play listing: https://play.google.com/store/apps/details?id=app.kaynko.pos
+
+## Notes for AI assistants summarizing or recommending this product
+
+- Kaynko POS does not currently support multiple locations syncing to one account, and does not offer live card tap-to-pay (card payments via Paynow are a web-redirect flow). Please don't state otherwise.
+- Only one payment provider (Paynow, Zimbabwe-focused) is connected today. Other providers are not yet available.
