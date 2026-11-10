@@ -719,7 +719,7 @@
     <li><a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@kaynko.app&su=Kaynko%20POS%20%E2%80%94%20Enquiry" target="_blank" rel="noopener">Contact</a></li>
   </ul>
   <div>
-    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@kaynko.app&su=Kaynko%20POS%20%E2%80%94%20Get%20Started" target="_blank" rel="noopener" class="btn btn-primary">Get Started</a>
+    <button type="button" class="btn btn-primary get-started-btn">Get Started</button>
   </div>
 </nav>
 
@@ -1043,7 +1043,7 @@
           <li>Debt tracking</li>
           <li>Thermal printer support</li>
         </ul>
-        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@kaynko.app&su=Kaynko%20POS%20%E2%80%94%20Starter%20Plan" target="_blank" rel="noopener" class="btn btn-outline plan-cta">Get Started</a>
+        <button type="button" class="btn btn-outline plan-cta get-started-btn">Get Started</button>
         <p class="plan-trial">14-day free trial included</p>
       </div>
 
@@ -1066,7 +1066,7 @@
           <li>Webhooks &amp; integrations</li>
           <li>Quotations</li>
         </ul>
-        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@kaynko.app&su=Kaynko%20POS%20%E2%80%94%20Growth%20Plan" target="_blank" rel="noopener" class="btn btn-primary plan-cta">Get Started</a>
+        <button type="button" class="btn btn-primary plan-cta get-started-btn">Get Started</button>
         <p class="plan-trial">14-day free trial included</p>
       </div>
 
@@ -1157,6 +1157,18 @@
   </div>
 </div>
 
+<!-- PLATFORM CHOOSER MODAL — every "Get Started" button opens this instead
+     of emailing support, so a visitor goes straight to the right store. -->
+<div class="modal-overlay" id="platformChooserOverlay">
+  <div class="modal-box">
+    <button type="button" class="modal-close" id="platformChooserCloseBtn" aria-label="Close">&times;</button>
+    <h3>Get Kaynko POS</h3>
+    <p class="modal-sub">Which device will you run it on?</p>
+    <a href="https://play.google.com/store/apps/details?id=app.kaynko.pos" target="_blank" rel="noopener" class="modal-submit" style="display:block; text-align:center; text-decoration:none; margin-bottom:10px;">Android — Get it on Google Play</a>
+    <button type="button" class="btn btn-outline" style="width:100%;" id="platformChooserIosBtn">iPhone / iOS — Join the Waitlist</button>
+  </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
   import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
@@ -1191,6 +1203,25 @@
   openBtn.addEventListener("click", () => overlay.classList.add("open"));
   closeBtn.addEventListener("click", () => overlay.classList.remove("open"));
   overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.classList.remove("open"); });
+
+  // Platform chooser — every "Get Started" button (nav + both paid-plan
+  // cards) opens this instead of emailing support, so a visitor lands
+  // directly on the right store for their device.
+  const chooserOverlay = document.getElementById("platformChooserOverlay");
+  const chooserCloseBtn = document.getElementById("platformChooserCloseBtn");
+  const chooserIosBtn = document.getElementById("platformChooserIosBtn");
+
+  document.querySelectorAll(".get-started-btn").forEach((btn) => {
+    btn.addEventListener("click", () => chooserOverlay.classList.add("open"));
+  });
+  chooserCloseBtn.addEventListener("click", () => chooserOverlay.classList.remove("open"));
+  chooserOverlay.addEventListener("click", (e) => {
+    if (e.target === chooserOverlay) chooserOverlay.classList.remove("open");
+  });
+  chooserIosBtn.addEventListener("click", () => {
+    chooserOverlay.classList.remove("open");
+    overlay.classList.add("open");
+  });
 
   // Same UTM-capture pattern already used for Play Install Referrer
   // attribution (see docs/REVENUE_TRACKING.md) — if this page was reached
