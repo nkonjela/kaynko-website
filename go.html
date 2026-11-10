@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opening Kaynko POS…</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="/images/kaynko-pos-icon.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #1A1A1A;
+      background: #FFFFFF;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 0 24px;
+    }
+    a { color: #1B7A3E; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <!-- An affiliate's shareable, trackable link: kaynko.app/go.html?ref=CODE.
+       Logs a best-effort click signal, then redirects straight to the Play
+       Store listing with the referrer param already parsed by
+       lib/core/utils/install_attribution.dart's parseInstallReferrer() —
+       no app changes needed for this half of the flow. -->
+  <noscript>
+    <p>JavaScript is required for this link.
+      <a href="https://play.google.com/store/apps/details?id=app.kaynko.pos">Continue to the Play Store</a>
+    </p>
+  </noscript>
+  <div id="fallback" style="display:none;">
+    <p>Redirecting…
+      <a id="fallbackLink" href="https://play.google.com/store/apps/details?id=app.kaynko.pos">Continue to the Play Store</a>
+    </p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-functions.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAYZOFURj_j6kHM4FKcwN2QfTXD8i1icpU",
+      authDomain: "kaynko-pos.firebaseapp.com",
+      projectId: "kaynko-pos",
+      storageBucket: "kaynko-pos.firebasestorage.app",
+      messagingSenderId: "444868439321",
+      appId: "1:444868439321:web:c58a34371a914f449fe988",
+    };
+
+    const PLAY_STORE_BASE = "https://play.google.com/store/apps/details?id=app.kaynko.pos";
+    const CODE_PATTERN = /^[A-Z]{3}-\d{4}$/;
+
+    const params = new URLSearchParams(window.location.search);
+    const code = (params.get("ref") || "").trim().toUpperCase();
+    const valid = CODE_PATTERN.test(code);
+
+    const target = valid
+      ? `${PLAY_STORE_BASE}&referrer=${encodeURIComponent("referrer_code=" + code)}`
+      : PLAY_STORE_BASE;
+
+    document.getElementById("fallbackLink").href = target;
+    document.getElementById("fallback").style.display = "block";
+
+    // Fire-and-forget — never blocks or delays the redirect, and never
+    // surfaces an error to the visitor either way.
+    if (valid) {
+      (async () => {
+        try {
+          const app = initializeApp(firebaseConfig);
+          const auth = getAuth(app);
+          const functions = getFunctions(app, "us-central1");
+          await signInAnonymously(auth);
+          const logAffiliateLinkClick = httpsCallable(functions, "logAffiliateLinkClick");
+          await logAffiliateLinkClick({ code });
+        } catch {
+          // best-effort only
+        }
+      })();
+    }
+
+    window.location.replace(target);
+  </script>
+</body>
+</html>

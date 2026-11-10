@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Affiliate Login — Kaynko POS</title>
+  <meta name="description" content="Sign in to your Kaynko POS affiliate dashboard to see your referral link, signups, and earnings.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="/images/kaynko-pos-icon.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #1B7A3E;
+      --green-dark: #145C2E;
+      --green-tint: #E8F5E9;
+      --text:       #1A1A1A;
+      --text-mid:   #555;
+      --text-light: #888;
+      --border:     #E0E0E0;
+      --bg:         #F8FAFB;
+      --white:      #FFFFFF;
+      --danger:     #C62828;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 1rem; font-weight: 700; color: var(--text); }
+    .logo img { width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0; }
+    .header-link { font-size: 0.85rem; color: var(--text-mid); }
+
+    .content { max-width: 420px; margin: 60px auto; padding: 0 5% 80px; }
+
+    h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 10px; }
+    p.lead { font-size: 0.95rem; color: var(--text-mid); line-height: 1.6; margin-bottom: 24px; }
+
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+    .field { margin-bottom: 16px; }
+    input {
+      width: 100%;
+      font-size: 0.95rem;
+      font-family: inherit;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    input:focus { outline: none; border-color: var(--green); background: var(--white); }
+
+    .submit-btn {
+      width: 100%;
+      font-size: 0.95rem; font-weight: 700;
+      padding: 13px;
+      border: none; border-radius: 8px;
+      background: var(--green); color: var(--white);
+      cursor: pointer;
+    }
+    .submit-btn:hover { background: var(--green-dark); }
+    .submit-btn:disabled { background: var(--border); cursor: not-allowed; }
+
+    .status { margin-top: 14px; padding: 12px 14px; border-radius: 8px; font-size: 0.85rem; display: none; }
+    .status.error { display: block; background: #FDEDED; color: var(--danger); border: 1px solid #F5C6C6; }
+    .status.success { display: block; background: var(--green-tint); color: var(--green-dark); border: 1px solid #C8E6C9; }
+
+    .request-view.hidden, .sent-view.hidden, .completing-view.hidden { display: none; }
+    .sent-view, .completing-view { text-align: center; padding: 20px 0; }
+    .sent-view .icon, .completing-view .icon { font-size: 44px; margin-bottom: 10px; }
+
+    .apply-link { display: block; margin-top: 28px; font-size: 0.85rem; color: var(--text-light); text-align: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="logo">
+      <img src="/images/kaynko-pos-icon.png" alt="Kaynko POS">
+      Kaynko POS
+    </a>
+    <a href="/" class="header-link">← Back to site</a>
+  </header>
+
+  <div class="content">
+    <div class="request-view" id="requestView">
+      <h1>Affiliate Login</h1>
+      <p class="lead">Enter the email your affiliate application was approved with. We'll send you a sign-in link — no password needed.</p>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" required autocomplete="email">
+      </div>
+      <button type="button" class="submit-btn" id="sendBtn">Send me a login link</button>
+      <div class="status error" id="statusError"></div>
+    </div>
+
+    <div class="sent-view hidden" id="sentView">
+      <div class="icon">📬</div>
+      <h1>Check your email</h1>
+      <p class="lead">We sent a sign-in link to <strong id="sentToEmail"></strong>. Open it on this device to get into your dashboard.</p>
+    </div>
+
+    <div class="completing-view hidden" id="completingView">
+      <div class="icon">🔐</div>
+      <h1>Signing you in…</h1>
+      <p class="lead" id="completingMessage">One moment.</p>
+    </div>
+
+    <a href="/affiliates.html" class="apply-link">Not an affiliate yet? Apply here →</a>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import {
+      getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
+    } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+
+    // Same public Firebase web config as affiliates.html/admin-affiliates.html.
+    const firebaseConfig = {
+      apiKey: "AIzaSyAYZOFURj_j6kHM4FKcwN2QfTXD8i1icpU",
+      authDomain: "kaynko-pos.firebaseapp.com",
+      projectId: "kaynko-pos",
+      storageBucket: "kaynko-pos.firebasestorage.app",
+      messagingSenderId: "444868439321",
+      appId: "1:444868439321:web:c58a34371a914f449fe988",
+    };
+
+    // TODO (founder, one-time setup): Firebase Console → Authentication →
+    // Sign-in method → Email/Password → enable the "Email link
+    // (passwordless sign-in)" toggle (separate from the Email/Password
+    // toggle itself). Also confirm kaynko.app is listed under
+    // Authentication → Settings → Authorized domains (it should be, as the
+    // site's own custom domain, but this page's sign-in link will fail with
+    // auth/unauthorized-continue-uri until it is).
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const STORAGE_KEY = "kaynkoAffiliateEmailForSignIn";
+    const actionCodeSettings = {
+      url: window.location.origin + "/affiliate-login.html",
+      handleCodeInApp: true,
+    };
+
+    const requestView = document.getElementById("requestView");
+    const sentView = document.getElementById("sentView");
+    const completingView = document.getElementById("completingView");
+    const statusError = document.getElementById("statusError");
+    const emailInput = document.getElementById("email");
+    const sendBtn = document.getElementById("sendBtn");
+
+    function showOnly(view) {
+      requestView.classList.add("hidden");
+      sentView.classList.add("hidden");
+      completingView.classList.add("hidden");
+      view.classList.remove("hidden");
+    }
+
+    async function completeSignIn() {
+      showOnly(completingView);
+      let email = window.localStorage.getItem(STORAGE_KEY);
+      if (!email) {
+        // Opened on a different device/browser than the link was requested
+        // from — ask for the email again to complete sign-in securely.
+        email = window.prompt("Please confirm your email to finish signing in:");
+      }
+      if (!email) {
+        showOnly(requestView);
+        statusError.textContent = "Sign-in needs your email to confirm it's really you.";
+        statusError.style.display = "block";
+        return;
+      }
+      try {
+        await signInWithEmailLink(auth, email, window.location.href);
+        window.localStorage.removeItem(STORAGE_KEY);
+        window.location.replace("/affiliate-dashboard.html");
+      } catch (err) {
+        showOnly(requestView);
+        statusError.textContent = "Could not complete sign-in: " + (err?.message || err);
+        statusError.style.display = "block";
+      }
+    }
+
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+      completeSignIn();
+    } else {
+      sendBtn.addEventListener("click", async () => {
+        statusError.style.display = "none";
+        const email = emailInput.value.trim();
+        if (!email) {
+          statusError.textContent = "Please enter your email.";
+          statusError.style.display = "block";
+          return;
+        }
+        sendBtn.disabled = true;
+        sendBtn.textContent = "Sending…";
+        try {
+          await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+          window.localStorage.setItem(STORAGE_KEY, email);
+          document.getElementById("sentToEmail").textContent = email;
+          showOnly(sentView);
+        } catch (err) {
+          statusError.textContent = "Could not send login link: " + (err?.message || err);
+          statusError.style.display = "block";
+        } finally {
+          sendBtn.disabled = false;
+          sendBtn.textContent = "Send me a login link";
+        }
+      });
+    }
+  </script>
+</body>
+</html>
