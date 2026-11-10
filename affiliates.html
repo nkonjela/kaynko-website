@@ -136,17 +136,17 @@
         <div class="field">
           <label for="payoutMethod">How should we pay you?</label>
           <select id="payoutMethod">
-            <option value="ecocash">EcoCash</option>
-            <option value="bank_zw">Bank transfer (Zimbabwe)</option>
-            <option value="bank_intl">Bank transfer (international)</option>
-            <option value="stripe_connect">Stripe (if available)</option>
-            <option value="other">Other</option>
+            <option value="" disabled selected>Select your country first</option>
           </select>
         </div>
 
         <div class="field" id="field-ecocash">
           <label for="ecocashNumber">EcoCash number</label>
           <input id="ecocashNumber" type="text">
+        </div>
+        <div class="field" id="field-fnb">
+          <label for="fnbEwalletNumber">FNB eWallet cellphone number</label>
+          <input id="fnbEwalletNumber" type="text">
         </div>
         <div id="field-bank" style="display:none;">
           <div class="field">
@@ -232,10 +232,42 @@
       countrySelect.appendChild(opt);
     }
 
+    // Country-aware payout methods — never show a country a payment method
+    // that doesn't apply to it (same principle already enforced in-app for
+    // Settings → Payments' provider list). Stripe is deliberately left out
+    // of every country for now — payouts are manual until an automated
+    // payout system exists (see docs/AFFILIATE_PROGRAM.md).
+    const payoutMethodLabels = {
+      ecocash: "EcoCash",
+      fnb_ewallet: "FNB eWallet",
+      bank_zw: "Bank transfer (Zimbabwe)",
+      bank_intl: "Bank transfer (international)",
+      other: "Other",
+    };
+    const payoutMethodsByCountry = {
+      ZW: ["ecocash", "bank_zw", "other"],
+      ZA: ["fnb_ewallet", "bank_intl", "other"],
+    };
+    const DEFAULT_PAYOUT_METHODS = ["bank_intl", "other"];
+
     const payoutMethodSelect = document.getElementById("payoutMethod");
+    function populatePayoutMethods(countryCode) {
+      const methods = payoutMethodsByCountry[countryCode] || DEFAULT_PAYOUT_METHODS;
+      payoutMethodSelect.innerHTML = "";
+      for (const method of methods) {
+        const opt = document.createElement("option");
+        opt.value = method;
+        opt.textContent = payoutMethodLabels[method];
+        payoutMethodSelect.appendChild(opt);
+      }
+      updatePayoutFields();
+    }
+    countrySelect.addEventListener("change", () => populatePayoutMethods(countrySelect.value));
+
     function updatePayoutFields() {
       const method = payoutMethodSelect.value;
       document.getElementById("field-ecocash").style.display = method === "ecocash" ? "" : "none";
+      document.getElementById("field-fnb").style.display = method === "fnb_ewallet" ? "" : "none";
       document.getElementById("field-bank").style.display = (method === "bank_zw" || method === "bank_intl") ? "" : "none";
       document.getElementById("field-other").style.display = (method === "stripe_connect" || method === "other") ? "" : "none";
     }
@@ -246,6 +278,10 @@
       if (method === "ecocash") {
         const v = document.getElementById("ecocashNumber").value.trim();
         return v ? { ecocashNumber: v } : null;
+      }
+      if (method === "fnb_ewallet") {
+        const v = document.getElementById("fnbEwalletNumber").value.trim();
+        return v ? { fnbEwalletNumber: v } : null;
       }
       if (method === "bank_zw" || method === "bank_intl") {
         const bankName = document.getElementById("bankName").value.trim();
