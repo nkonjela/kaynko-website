@@ -178,8 +178,10 @@
 
     <div class="success-view" id="successView">
       <div class="icon">✅</div>
-      <h2>Request submitted</h2>
-      <p>We've received your application and will review it shortly. We'll be in touch at the contact you provided once a decision is made.</p>
+      <h2 id="successHeading">Request submitted</h2>
+      <p id="successBody">We've received your application and will review it shortly. We'll be in touch at the contact you provided once a decision is made.</p>
+      <div class="approved-code" id="approvedCodeBox" style="display:none; margin-top:16px; padding:12px 14px; border-radius:8px; background:var(--green-tint); color:var(--green-dark); font-weight:700; font-size:1.1rem;"></div>
+      <p id="disclosureNote" style="display:none; margin-top:14px; font-size:0.8rem; color:var(--text-light); text-align:left;">One requirement: when you promote Kaynko, disclose the relationship — e.g. "I earn a commission if you sign up with my code."</p>
     </div>
 
     <p style="margin-top:28px; font-size:0.85rem; color:var(--text-mid);">Already approved? <a href="/affiliate-login.html">Log in to your dashboard →</a></p>
@@ -289,13 +291,23 @@
       try {
         await signInAnonymously(auth);
         const submitAffiliateRequest = httpsCallable(functions, "submitAffiliateRequest");
-        await submitAffiliateRequest({
+        const result = await submitAffiliateRequest({
           businessOrPersonName: name,
           contact,
           country,
           payoutMethod,
           payoutDetails,
         });
+        const code = result.data?.code;
+        if (code) {
+          document.getElementById("successHeading").textContent = "You're approved!";
+          document.getElementById("successBody").textContent =
+            "Your affiliate code is ready — use the link below to log into your dashboard and start sharing it.";
+          const codeBox = document.getElementById("approvedCodeBox");
+          codeBox.textContent = code;
+          codeBox.style.display = "block";
+          document.getElementById("disclosureNote").style.display = "block";
+        }
         document.getElementById("formView").classList.add("hidden");
         document.getElementById("successView").classList.add("visible");
       } catch (err) {
