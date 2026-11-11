@@ -375,7 +375,8 @@
         document.getElementById("formView").classList.add("hidden");
         document.getElementById("successView").classList.add("visible");
       } catch (err) {
-        statusError.textContent = "Could not submit your request: " + (err?.message || err);
+        console.error("Affiliate request submission failed:", err);
+        statusError.textContent = "Something went wrong submitting your request. Please try again.";
         statusError.style.display = "block";
       } finally {
         submitBtn.disabled = false;
