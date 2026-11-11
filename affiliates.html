@@ -116,7 +116,7 @@
   <div class="content">
     <div class="form-view" id="formView">
       <h1>Become an Affiliate</h1>
-      <p class="lead">Refer shop owners to Kaynko POS and earn a recurring commission for as long as they stay a customer. Tell us a bit about yourself and how you'd like to be paid — we review every application and get back to you with your referral code.</p>
+      <p class="lead">Refer shop owners to Kaynko POS and earn a <strong>20% recurring commission</strong> on their subscription, for as long as they stay a customer. Tell us a bit about yourself and how you'd like to be paid — most applications are approved instantly, with your referral code and link ready right away.</p>
 
       <form id="affiliateForm">
         <div class="field">
@@ -126,6 +126,7 @@
         <div class="field">
           <label for="contact">Email or phone number</label>
           <input id="contact" type="text" required>
+          <p class="hint">Email works best — you'll need it to log into your self-serve dashboard later. A phone-only contact means we'll have to add dashboard access for you by hand.</p>
         </div>
         <div class="field">
           <label for="country">Country</label>
@@ -178,14 +179,19 @@
 
     <div class="success-view" id="successView">
       <div class="icon">✅</div>
-      <h2 id="successHeading">Request submitted</h2>
-      <p id="successBody">We've received your application and will review it shortly. We'll be in touch at the contact you provided once a decision is made.</p>
+      <h2 id="successHeading">Processing your application…</h2>
+      <p id="successBody">One moment — most applications are approved instantly.</p>
       <div class="approved-code" id="approvedCodeBox" style="display:none; margin-top:16px; padding:12px 14px; border-radius:8px; background:var(--green-tint); color:var(--green-dark); font-weight:700; font-size:1.1rem;"></div>
+      <div id="approvedLinkRow" style="display:none; margin-top:10px; text-align:left;">
+        <label for="approvedLinkInput" style="margin-bottom:6px;">Your referral link</label>
+        <input id="approvedLinkInput" type="text" readonly style="width:100%; font-size:0.85rem; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text-mid);">
+        <button type="button" class="submit-btn" id="copyLinkBtn" style="margin-top:10px;">Copy referral link</button>
+      </div>
       <p id="disclosureNote" style="display:none; margin-top:14px; font-size:0.8rem; color:var(--text-light); text-align:left;">One requirement: when you promote Kaynko, disclose the relationship — e.g. "I earn a commission if you sign up with my code."</p>
     </div>
 
     <p style="margin-top:28px; font-size:0.85rem; color:var(--text-mid);">Already approved? <a href="/affiliate-login.html">Log in to your dashboard →</a></p>
-    <a href="/faq.html" class="back">See more in the FAQ →</a>
+    <a href="/faq.html#affiliate" class="back">See more in the FAQ →</a>
   </div>
 
   <footer>&copy; 2026 Kaynko POS. Built for retailers.</footer>
@@ -338,11 +344,33 @@
         if (code) {
           document.getElementById("successHeading").textContent = "You're approved!";
           document.getElementById("successBody").textContent =
-            "Your affiliate code is ready — use the link below to log into your dashboard and start sharing it.";
+            "Your affiliate code and referral link are ready below. Share the link below to start earning — it tracks signups automatically.";
           const codeBox = document.getElementById("approvedCodeBox");
           codeBox.textContent = code;
           codeBox.style.display = "block";
+
+          const link = `${window.location.origin}/go.html?ref=${code}`;
+          const linkInput = document.getElementById("approvedLinkInput");
+          linkInput.value = link;
+          document.getElementById("approvedLinkRow").style.display = "block";
+          document.getElementById("copyLinkBtn").addEventListener("click", async () => {
+            const btn = document.getElementById("copyLinkBtn");
+            try {
+              await navigator.clipboard.writeText(link);
+            } catch {
+              linkInput.select();
+              document.execCommand("copy");
+            }
+            const original = btn.textContent;
+            btn.textContent = "Copied!";
+            setTimeout(() => { btn.textContent = original; }, 1500);
+          });
+
           document.getElementById("disclosureNote").style.display = "block";
+        } else {
+          document.getElementById("successHeading").textContent = "Request submitted";
+          document.getElementById("successBody").textContent =
+            "We've received your application. We'll be in touch at the contact you provided.";
         }
         document.getElementById("formView").classList.add("hidden");
         document.getElementById("successView").classList.add("visible");

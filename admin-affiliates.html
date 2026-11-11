@@ -316,6 +316,7 @@
     function renderOverviewRow(a) {
       const row = document.createElement("div");
       row.className = "overview-row";
+      const toggleLabel = a.status === "active" ? "Revoke" : "Reactivate";
       row.innerHTML = `
         <div class="overview-top">
           <span class="overview-name">${escapeHtml(a.businessOrPersonName)}</span>
@@ -328,7 +329,57 @@
           <div><strong>${usdFormatter.format(a.estimatedEarningsUsd)}</strong> est. earnings</div>
           <div><strong>${a.linkClicks}</strong> clicks</div>
         </div>
+        <div class="payout-details" id="overview-details-${a.requestId}"></div>
+        <div class="actions" style="margin-top:10px;">
+          <button class="view-overview-details">View payout details</button>
+          <button class="danger toggle-status">${toggleLabel}</button>
+        </div>
       `;
+
+      row.querySelector(".view-overview-details").addEventListener("click", async (e) => {
+        const btn = e.target;
+        const box = row.querySelector(`#overview-details-${a.requestId}`);
+        if (box.style.display === "block") {
+          box.style.display = "none";
+          return;
+        }
+        btn.disabled = true;
+        try {
+          const getAffiliatePayoutDetails = httpsCallable(functions, "getAffiliatePayoutDetails");
+          const result = await getAffiliatePayoutDetails({ requestId: a.requestId });
+          box.textContent = formatDetails(result.data.details) + (result.data.notes ? `\nnotes: ${result.data.notes}` : "");
+          box.style.display = "block";
+        } catch (err) {
+          box.textContent = "Could not load payout details: " + (err?.message || err);
+          box.style.display = "block";
+        } finally {
+          btn.disabled = false;
+        }
+      });
+
+      row.querySelector(".toggle-status").addEventListener("click", async (e) => {
+        const nextStatus = a.status === "active" ? "revoked" : "active";
+        const confirmMessage = nextStatus === "revoked"
+          ? `Revoke ${a.businessOrPersonName} (${a.code})?\n\n`
+            + `This immediately blocks their dashboard login and stops new signups from validating their code.\n\n`
+            + `IMPORTANT: this does NOT stop next month's payout by itself — the reconciliation script only reads `
+            + `the affiliate registry Google Sheet's own Status column, a separate field. You must also mark `
+            + `${a.code} inactive there before the next reconciliation run, or they will still be paid.`
+          : `Reactivate ${a.businessOrPersonName} (${a.code})?`;
+        if (!confirm(confirmMessage)) return;
+        const btn = e.target;
+        btn.disabled = true;
+        try {
+          const setAffiliateStatus = httpsCallable(functions, "setAffiliateStatus");
+          await setAffiliateStatus({ code: a.code, status: nextStatus });
+          a.status = nextStatus;
+          row.replaceWith(renderOverviewRow(a));
+        } catch (err) {
+          alert("Could not update status: " + (err?.message || err));
+          btn.disabled = false;
+        }
+      });
+
       return row;
     }
 
