@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pay via EcoCash — Kaynko POS</title>
+  <meta name="description" content="Pay your Kaynko POS subscription via EcoCash using the code shown in the app.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="/images/kaynko-pos-icon.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #1B7A3E;
+      --green-dark: #145C2E;
+      --green-tint: #E8F5E9;
+      --text:       #1A1A1A;
+      --text-mid:   #555;
+      --text-light: #888;
+      --border:     #E0E0E0;
+      --bg:         #F8FAFB;
+      --white:      #FFFFFF;
+      --danger:     #C62828;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 1rem; font-weight: 700; color: var(--text); }
+    .logo img { width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0; }
+
+    .content { max-width: 420px; margin: 48px auto; padding: 0 5% 80px; }
+
+    h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 10px; }
+    p.lead { font-size: 0.95rem; color: var(--text-mid); line-height: 1.6; margin-bottom: 24px; }
+
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+    .field { margin-bottom: 16px; }
+    input {
+      width: 100%;
+      font-size: 1.1rem;
+      font-family: inherit;
+      text-align: center;
+      letter-spacing: 4px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    input#phone { font-size: 0.95rem; text-align: left; letter-spacing: normal; }
+    input:focus { outline: none; border-color: var(--green); background: var(--white); }
+    .hint { font-size: 0.78rem; color: var(--text-light); margin-top: 4px; }
+
+    .submit-btn {
+      width: 100%;
+      font-size: 0.95rem; font-weight: 700;
+      padding: 13px;
+      border: none; border-radius: 8px;
+      background: var(--green); color: var(--white);
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .submit-btn:hover { background: var(--green-dark); }
+    .submit-btn:disabled { background: var(--border); cursor: not-allowed; }
+
+    .status { margin-top: 14px; padding: 12px 14px; border-radius: 8px; font-size: 0.85rem; display: none; }
+    .status.error { display: block; background: #FDEDED; color: var(--danger); border: 1px solid #F5C6C6; }
+
+    .plan-box {
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: var(--green-tint);
+      color: var(--green-dark);
+      margin-bottom: 20px;
+      display: none;
+    }
+    .plan-box.visible { display: flex; justify-content: space-between; align-items: center; }
+    .plan-box .name { font-weight: 700; }
+    .plan-box .price { font-weight: 700; font-size: 1.1rem; }
+
+    .view.hidden { display: none; }
+    .waiting-view, .success-view { text-align: center; padding: 20px 0; }
+    .waiting-view .spinner {
+      width: 32px; height: 32px; margin: 0 auto 16px;
+      border: 3px solid var(--border); border-top-color: var(--green);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .success-view .icon { font-size: 48px; margin-bottom: 12px; }
+
+    footer { padding: 28px 5%; text-align: center; font-size: 0.82rem; color: var(--text-light); border-top: 1px solid var(--border); margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="logo">
+      <img src="/images/kaynko-pos-icon.png" alt="Kaynko POS">
+      Kaynko POS
+    </a>
+  </header>
+
+  <div class="content">
+
+    <div class="view" id="codeView">
+      <h1>Pay via EcoCash</h1>
+      <p class="lead">Enter the 6-digit code shown in the Kaynko app, under "No bank card? Pay via EcoCash instead."</p>
+      <form id="codeForm">
+        <div class="field">
+          <label for="code">Checkout code</label>
+          <input id="code" type="text" inputmode="numeric" maxlength="6" placeholder="000000" required>
+        </div>
+        <button type="submit" class="submit-btn" id="codeSubmitBtn">Continue</button>
+        <div class="status error" id="codeError"></div>
+      </form>
+    </div>
+
+    <div class="view hidden" id="phoneView">
+      <h1>Pay via EcoCash</h1>
+      <div class="plan-box" id="planBox">
+        <span class="name" id="planName"></span>
+        <span class="price" id="planPrice"></span>
+      </div>
+      <p class="lead">Enter your EcoCash number. You'll get a prompt on your phone to approve the payment.</p>
+      <form id="phoneForm">
+        <div class="field">
+          <label for="phone">EcoCash phone number</label>
+          <input id="phone" type="tel" placeholder="0771234567" required>
+        </div>
+        <button type="submit" class="submit-btn" id="phoneSubmitBtn">Pay now</button>
+        <div class="status error" id="phoneError"></div>
+      </form>
+    </div>
+
+    <div class="view hidden" id="waitingView">
+      <div class="waiting-view">
+        <div class="spinner"></div>
+        <h1>Confirming payment</h1>
+        <p class="lead" id="waitingMessage">Check your phone for the EcoCash prompt and approve it.</p>
+      </div>
+    </div>
+
+    <div class="view hidden" id="successView">
+      <div class="success-view">
+        <div class="icon">✅</div>
+        <h1>You're all set!</h1>
+        <p class="lead">Your Kaynko POS plan is now active. Open the app to continue — it updates automatically, no reinstall needed.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>&copy; 2026 Kaynko POS. Built for retailers.</footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-functions.js";
+
+    // Same public Firebase web config as affiliates.html/go.html — not a
+    // secret, safe to expose (see affiliates.html's own comment on this).
+    const firebaseConfig = {
+      apiKey: "AIzaSyAYZOFURj_j6kHM4FKcwN2QfTXD8i1icpU",
+      authDomain: "kaynko-pos.firebaseapp.com",
+      projectId: "kaynko-pos",
+      storageBucket: "kaynko-pos.firebasestorage.app",
+      messagingSenderId: "444868439321",
+      appId: "1:444868439321:web:c58a34371a914f449fe988",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const functions = getFunctions(app, "us-central1");
+
+    const views = {
+      code: document.getElementById("codeView"),
+      phone: document.getElementById("phoneView"),
+      waiting: document.getElementById("waitingView"),
+      success: document.getElementById("successView"),
+    };
+    function showView(name) {
+      for (const [key, el] of Object.entries(views)) {
+        el.classList.toggle("hidden", key !== name);
+      }
+    }
+
+    let activeCode = null;
+    let pollHandle = null;
+
+    const codeForm = document.getElementById("codeForm");
+    const codeInput = document.getElementById("code");
+    const codeError = document.getElementById("codeError");
+    const codeSubmitBtn = document.getElementById("codeSubmitBtn");
+
+    codeForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      codeError.style.display = "none";
+      const code = codeInput.value.trim();
+      if (!/^\d{6}$/.test(code)) {
+        codeError.textContent = "Please enter the 6-digit code shown in the app.";
+        codeError.style.display = "block";
+        return;
+      }
+      codeSubmitBtn.disabled = true;
+      codeSubmitBtn.textContent = "Checking…";
+      try {
+        await signInAnonymously(auth);
+        const getSelfPayCheckoutSession = httpsCallable(functions, "getSelfPayCheckoutSession");
+        const result = await getSelfPayCheckoutSession({ code });
+        const data = result.data || {};
+        if (!data.valid) {
+          codeError.textContent = data.expired
+            ? "This code has expired. Please generate a new one in the app."
+            : "That code wasn't found. Double-check it and try again.";
+          codeError.style.display = "block";
+          return;
+        }
+        activeCode = code;
+        document.getElementById("planName").textContent = `${data.planDisplayName} plan`;
+        document.getElementById("planPrice").textContent = `$${Number(data.amountUsd).toFixed(2)}/mo`;
+        document.getElementById("planBox").classList.add("visible");
+        showView("phone");
+      } catch (err) {
+        console.error("Checking self-pay code failed:", err);
+        codeError.textContent = "Something went wrong. Please try again.";
+        codeError.style.display = "block";
+      } finally {
+        codeSubmitBtn.disabled = false;
+        codeSubmitBtn.textContent = "Continue";
+      }
+    });
+
+    const phoneForm = document.getElementById("phoneForm");
+    const phoneInput = document.getElementById("phone");
+    const phoneError = document.getElementById("phoneError");
+    const phoneSubmitBtn = document.getElementById("phoneSubmitBtn");
+
+    phoneForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      phoneError.style.display = "none";
+      const phone = phoneInput.value.trim();
+      if (!phone) {
+        phoneError.textContent = "Please enter your EcoCash number.";
+        phoneError.style.display = "block";
+        return;
+      }
+      phoneSubmitBtn.disabled = true;
+      phoneSubmitBtn.textContent = "Starting…";
+      try {
+        const startSelfPayEcocashPayment = httpsCallable(functions, "startSelfPayEcocashPayment");
+        const result = await startSelfPayEcocashPayment({ code: activeCode, phone });
+        const data = result.data || {};
+        if (data.state === "failed") {
+          phoneError.textContent = data.failureReason || "Could not start the payment. Please try again.";
+          phoneError.style.display = "block";
+          return;
+        }
+        document.getElementById("waitingMessage").textContent =
+          data.instructions || "Check your phone for the EcoCash prompt and approve it.";
+        showView("waiting");
+        startPolling();
+      } catch (err) {
+        console.error("Starting self-pay EcoCash payment failed:", err);
+        phoneError.textContent = "Something went wrong starting the payment. Please try again.";
+        phoneError.style.display = "block";
+      } finally {
+        phoneSubmitBtn.disabled = false;
+        phoneSubmitBtn.textContent = "Pay now";
+      }
+    });
+
+    function startPolling() {
+      const getSelfPayCheckoutStatus = httpsCallable(functions, "getSelfPayCheckoutStatus");
+      const waitingMessage = document.getElementById("waitingMessage");
+      pollHandle = setInterval(async () => {
+        try {
+          const result = await getSelfPayCheckoutStatus({ code: activeCode });
+          const data = result.data || {};
+          if (data.sessionStatus === "granted") {
+            clearInterval(pollHandle);
+            showView("success");
+            return;
+          }
+          if (["failed", "cancelled", "expired"].includes(data.paymentState)) {
+            clearInterval(pollHandle);
+            phoneError.textContent = "That payment didn't go through. Please try again.";
+            phoneError.style.display = "block";
+            showView("phone");
+            return;
+          }
+          if (data.paymentState === "succeeded") {
+            waitingMessage.textContent = "Payment confirmed — activating your plan…";
+          }
+        } catch {
+          // A transport error here is not proof of failure — keep polling.
+        }
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
