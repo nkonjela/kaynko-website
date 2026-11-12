@@ -117,7 +117,7 @@
 
     <div class="view" id="codeView">
       <h1>Pay via EcoCash</h1>
-      <p class="lead">Enter the 6-digit code shown in the Kaynko app, under "No bank card? Pay via EcoCash instead."</p>
+      <p class="lead">Enter the 6-digit code shown in the Kaynko app, under "No bank card? Pay via EcoCash instead." The code is valid for 10 minutes — if it's expired, go back to the app and generate a new one.</p>
       <form id="codeForm">
         <div class="field">
           <label for="code">Checkout code</label>
@@ -135,6 +135,7 @@
         <span class="price" id="planPrice"></span>
       </div>
       <p class="lead">Enter your EcoCash number. You'll get a prompt on your phone to approve the payment.</p>
+      <p class="hint" id="countdownHint" style="margin-bottom:16px;"></p>
       <form id="phoneForm">
         <div class="field">
           <label for="phone">EcoCash phone number</label>
@@ -199,6 +200,37 @@
 
     let activeCode = null;
     let pollHandle = null;
+    let countdownHandle = null;
+    const countdownHint = document.getElementById("countdownHint");
+
+    function stopCountdown() {
+      if (countdownHandle) {
+        clearInterval(countdownHandle);
+        countdownHandle = null;
+      }
+    }
+
+    function startCountdown(expiresAtMs) {
+      stopCountdown();
+      function tick() {
+        const remainingMs = expiresAtMs - Date.now();
+        if (remainingMs <= 0) {
+          stopCountdown();
+          countdownHint.textContent = "";
+          phoneError.textContent = "This code has expired. Please generate a new one in the app.";
+          phoneError.style.display = "block";
+          showView("code");
+          return;
+        }
+        const totalSeconds = Math.floor(remainingMs / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        countdownHint.textContent =
+          `Code expires in ${minutes}:${String(seconds).padStart(2, "0")}`;
+      }
+      tick();
+      countdownHandle = setInterval(tick, 1000);
+    }
 
     const codeForm = document.getElementById("codeForm");
     const codeInput = document.getElementById("code");
@@ -233,6 +265,7 @@
         document.getElementById("planPrice").textContent = `$${Number(data.amountUsd).toFixed(2)}/mo`;
         document.getElementById("planBox").classList.add("visible");
         showView("phone");
+        startCountdown(data.expiresAtMs);
       } catch (err) {
         console.error("Checking self-pay code failed:", err);
         codeError.textContent = "Something went wrong. Please try again.";
@@ -268,6 +301,7 @@
           phoneError.style.display = "block";
           return;
         }
+        stopCountdown();
         document.getElementById("waitingMessage").textContent =
           data.instructions || "Check your phone for the EcoCash prompt and approve it.";
         showView("waiting");
