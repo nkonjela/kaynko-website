@@ -34,13 +34,19 @@
   <h2>4. Google Sheets Integration</h2>
   <p>If you connect your Google account, Kaynko creates a spreadsheet in your Google Drive. The app only accesses spreadsheets it creates — it cannot read or modify any other files in your Drive. You can disconnect at any time from Settings → Export &amp; Sync.</p>
 
-  <h2>5. Webhooks</h2>
+  <h2>5. Automatic Backup</h2>
+  <p>If you enable backup, Kaynko uploads an encrypted copy of your business database to a private, app-only folder in your own Google Drive (not visible in your regular Drive file list, and not accessible to us). It is encrypted with a key derived from your own PIN before it ever leaves your device — we cannot read it. You can trigger a manual backup or restore, or turn automatic backup off, at any time from Settings.</p>
+
+  <h2>6. Webhooks</h2>
   <p>If you configure webhooks, Kaynko sends sales and event data to the HTTPS endpoints you specify. You are responsible for the security of those endpoints.</p>
 
-  <h2>6. Security</h2>
+  <h2>7. Affiliate Program</h2>
+  <p>If you apply to Kaynko's affiliate program, we collect the contact details and payout information (such as a bank account or mobile money number) you submit, in order to verify your application and pay commissions. This information is stored separately from any business sales data, is never shown in founder-review listings, and is only accessed at actual payout time.</p>
+
+  <h2>8. Security</h2>
   <p>The local database is encrypted with AES-256. Sensitive credentials (encryption keys, API keys, webhook secrets) are stored in Android Keystore via FlutterSecureStorage.</p>
 
-  <h2>7. Contact</h2>
+  <h2>9. Contact</h2>
   <p>Questions? Email us at <a href="mailto:support@kaynko.app">support@kaynko.app</a></p>
 </body>
 </html>
